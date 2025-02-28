@@ -2,9 +2,6 @@ import { Pagination } from "@/components/pagination";
 import { RequestQuery } from "./type";
 import { getAllRequests } from "./actions";
 import RequestsTable from "@/components/requests-table";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { PlusCircle } from "lucide-react";
 import { CreateRequestButton } from "@/components/request-form";
 
 export default async function RequestsPage(props: {
@@ -18,9 +15,13 @@ export default async function RequestsPage(props: {
         sortBy?: string;
         sortOrder?: string;
         search?: string;
+        walletId?: string;
+        qrId?: string;
     }>
 }) {
     const searchParams = await props.searchParams;
+    const shouldAutoOpen = !!(searchParams?.walletId && searchParams?.qrId);
+
 
     const filters: RequestQuery = {
         page: searchParams?.page ? parseInt(searchParams.page) : 1,
@@ -41,7 +42,11 @@ export default async function RequestsPage(props: {
         <div className="p-4 sm:p-10">
             <div className="flex items-center justify-between gap-4 mb-6">
                 <h1 className="text-2xl font-bold">Requests</h1>
-                <CreateRequestButton />
+                <CreateRequestButton
+                    initialWalletId={searchParams?.walletId}
+                    initialQrId={searchParams?.qrId}
+                    shouldAutoOpen={shouldAutoOpen}
+                />
             </div>
 
             <RequestsTable data={data?.data} />

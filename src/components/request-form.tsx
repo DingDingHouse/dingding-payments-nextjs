@@ -1,6 +1,6 @@
 "use client"
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
 import {
@@ -21,10 +21,33 @@ import { Textarea } from "./ui/textarea";
 
 interface RequestFormProps {
     onClose: () => void;
+    initialWalletId?: string;
+    initialQrId?: string;
 }
 
-export function CreateRequestButton() {
+
+interface WalletFormProps {
+    initialWalletId?: string;
+    initialQrId?: string;
+    shouldAutoOpen?: boolean;
+}
+
+export function CreateRequestButton({
+    initialWalletId,
+    initialQrId,
+    shouldAutoOpen
+}: {
+    initialWalletId?: string;
+    initialQrId?: string;
+    shouldAutoOpen?: boolean;
+}) {
     const [isOpen, setIsOpen] = useState(false);
+
+    useEffect(() => {
+        if (shouldAutoOpen) {
+            setIsOpen(true);
+        }
+    }, [shouldAutoOpen]);
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -41,20 +64,24 @@ export function CreateRequestButton() {
                         Submit a new recharge or redeem request
                     </DialogDescription>
                 </DialogHeader>
-                <RequestForm onClose={() => setIsOpen(false)} />
+                <RequestForm
+                    onClose={() => setIsOpen(false)}
+                    initialWalletId={initialWalletId}
+                    initialQrId={initialQrId}
+                />
             </DialogContent>
         </Dialog>
     );
 }
 
 
-export default function RequestForm({ onClose }: RequestFormProps) {
+export default function RequestForm({ onClose, initialWalletId, initialQrId }: RequestFormProps) {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [type, setType] = useState<"deposit" | "withdrawal">("deposit");
     const [amount, setAmount] = useState("");
     const [transactionId, setTransactionId] = useState("");
-    const [qrReference, setQrReference] = useState("");
+    const [qrReference, setQrReference] = useState(initialQrId || "");
     const [notes, setNotes] = useState("");
     const [file, setFile] = useState<File | null>(null);
     const { toast } = useToast();
@@ -80,6 +107,12 @@ export default function RequestForm({ onClose }: RequestFormProps) {
         }
 
         return true;
+    };
+
+    const clearUrlAndClose = () => {
+        // Clear URL parameters and close dialog
+        router.replace('/requests', { scroll: false });
+        onClose();
     };
 
     const handleSubmit = async (e: FormEvent) => {
@@ -124,13 +157,10 @@ export default function RequestForm({ onClose }: RequestFormProps) {
                     description: "Your request has been submitted successfully",
                 });
 
-                // Refresh the data on the page
-                router.refresh();
+                clearUrlAndClose();
 
-                // Close the dialog
-                onClose();
             }
-        } catch (error) {
+        } catch {
             toast({
                 title: "Error",
                 description: "An unexpected error occurred. Please try again.",
@@ -146,6 +176,15 @@ export default function RequestForm({ onClose }: RequestFormProps) {
             setFile(e.target.files[0]);
         }
     };
+
+    useEffect(() => {
+        if (initialWalletId) {
+            setTransactionId(initialWalletId);
+        }
+        if (initialQrId) {
+            setQrReference(initialQrId);
+        }
+    }, [initialWalletId, initialQrId]);
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
@@ -258,7 +297,7 @@ export default function RequestForm({ onClose }: RequestFormProps) {
                 <Button
                     type="button"
                     variant="outline"
-                    onClick={onClose}
+                    onClick={clearUrlAndClose}
                     disabled={isLoading}
                 >
                     Cancel

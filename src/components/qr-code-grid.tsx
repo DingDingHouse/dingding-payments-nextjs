@@ -110,7 +110,8 @@ export function QRCodeGrid({ walletId }: QRCodeGridProps) {
     };
 
     const handleCreateRequest = () => {
-        router.push(`/requests/new?type=deposit&walletId=${walletId}&qrId=${selectedQR?._id}`);
+        setIsQRDialogOpen(false);
+        router.push(`/requests?type=deposit&walletId=${walletId}&qrId=${selectedQR?._id}`);
     };
 
     // Download QR code as image
