@@ -39,7 +39,9 @@ export async function POST(request: Request) {
             httpOnly: false, // Accessible via JavaScript
             secure: process.env.NODE_ENV === 'production',
             sameSite: 'strict',
-            maxAge: expiresIn
+            maxAge: expiresIn,
+            domain: config.domain
+
         });
 
         return response;
