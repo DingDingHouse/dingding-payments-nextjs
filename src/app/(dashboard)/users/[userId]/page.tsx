@@ -1,9 +1,8 @@
 
 
 
-export default async function UserDetailsPage({ params, searchParams }: {
-    params: { userId: string },
-    searchParams: { from?: string, to?: string }
+export default async function UserDetailsPage(props: {
+    params: Promise<{ userId: string }>
 }) {
 
 

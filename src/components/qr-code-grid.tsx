@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -38,10 +38,11 @@ export function QRCodeGrid({ walletId }: QRCodeGridProps) {
     const { toast } = useToast();
     const router = useRouter();
 
-    // Fetch QR codes using server action
-    async function fetchQRCodes() {
-        setLoading(true);
+    // Memoize the fetchQRCodes function
+    const fetchQRCodes = useCallback(async () => {
+        if (!walletId) return;
 
+        setLoading(true);
         try {
             const { data, error } = await getQRCodes({
                 walletId,
@@ -58,11 +59,9 @@ export function QRCodeGrid({ walletId }: QRCodeGridProps) {
                 });
                 setQrCodes([]);
             } else if (data) {
-                // Correctly access the data from the response
                 const responseData = data as unknown as QRCodeResponse;
                 setQrCodes(responseData.data || []);
 
-                // Use the meta information from the response
                 if (responseData.meta) {
                     setTotalItems(responseData.meta.total);
                     setTotalPages(responseData.meta.pages);
@@ -81,15 +80,11 @@ export function QRCodeGrid({ walletId }: QRCodeGridProps) {
         } finally {
             setLoading(false);
         }
-    }
+    }, [walletId, currentPage, itemsPerPage, toast]); // Include all dependencies
 
-    // Rest of your component remains the same...
-    // Fetch QR codes when wallet ID or page changes
     useEffect(() => {
-        if (walletId) {
-            fetchQRCodes();
-        }
-    }, [walletId, currentPage, itemsPerPage]);
+        fetchQRCodes();
+    }, [fetchQRCodes]);
 
     // Event handlers and rendering code...
     const handlePreviousPage = () => {

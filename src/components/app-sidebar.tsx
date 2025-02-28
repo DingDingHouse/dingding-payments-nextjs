@@ -34,7 +34,6 @@ type User = {
         name: string,
         descendants: string[]
     },
-    balance: number,
     status: string,
     permissions: Permission[]
 }
@@ -51,6 +50,7 @@ export function AppSidebar({ user }: { user: User }) {
             };
         });
 
+    console.log("USE ", user)
 
     return (
         <Sidebar>

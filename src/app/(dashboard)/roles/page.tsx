@@ -3,6 +3,9 @@ import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/ca
 import { getRoles } from "@/lib/actions";
 import Link from "next/link";
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 export default async function RolesPage() {
     const { data } = await getRoles();
 

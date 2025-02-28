@@ -8,6 +8,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { updateWallet } from '@/actions/wallets';
 import { Wallet } from '@/lib/types';
 
+enum WalletStatus {
+    Active = 'active',
+    Inactive = 'inactive'
+}
+
 interface UpdateWalletFormProps {
     wallet: Wallet;
     onSuccess: () => void;

@@ -4,6 +4,9 @@ import { WalletForm } from "@/components/wallet-form";
 import WalletsTable from "@/components/wallets-table";
 import { UserQuery } from "@/lib/types";
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 export default async function WalletsPage(props: {
     searchParams?: Promise<{
         page?: string;

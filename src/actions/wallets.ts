@@ -57,7 +57,9 @@ export async function getWallets(query?: WalletQuery): Promise<ActionResponse<an
                 'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json'
             },
-            credentials: 'include'
+            credentials: 'include',
+            cache: 'force-cache', // Add caching
+            next: { revalidate: 60 } // Revalidate every 60 seconds
         });
 
         const data = await response.json();
@@ -253,6 +255,11 @@ export async function getQRCodes(query: QRCodeQuery): Promise<ActionResponse<QRC
                 'Content-Type': 'application/json',
             },
             credentials: 'include',
+            cache: 'force-cache',
+            next: {
+                revalidate: 30, // Cache for 30 seconds
+                tags: [`wallet-${query.walletId}-qrcodes`]
+            }
         });
 
         const result = await response.json();

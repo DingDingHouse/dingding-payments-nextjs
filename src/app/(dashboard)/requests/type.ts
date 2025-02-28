@@ -10,22 +10,23 @@ export interface Request {
         name: string;
         username: string;
     };
-    type: RequestType;
-    status: RequestStatus;
+    type: string;
     amount: number;
-    notes?: string;
+    status: RequestStatus;
     transactionId?: string;
     qrReference?: string;
     paymentScreenshot?: string;
+    notes?: string;
+    createdAt: string;
+    updatedAt: string;
     approverId?: {
         _id: string;
         name: string;
         username: string;
     };
-    createdAt: string;
-    updatedAt: string;
+    processedAt?: string;
+    permissions: string[]; // Add this field
 }
-
 export type RequestQuery = {
     page?: number;
     limit?: number;
@@ -34,4 +35,6 @@ export type RequestQuery = {
     sortBy?: string;
     sortOrder?: 'asc' | 'desc';
     search?: string;
+    from?: string;
+    to?: string;
 }

@@ -4,12 +4,17 @@ import { getAllRequests } from "./actions";
 import RequestsTable from "@/components/requests-table";
 import { CreateRequestButton } from "@/components/request-form";
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
+
 export default async function RequestsPage(props: {
     searchParams?: Promise<{
         page?: string;
         limit?: string;
         status?: string;
         type?: string;
+        from?: string;
+        to?: string;
         amount?: string;
         amountOp?: string;
         sortBy?: string;
@@ -30,7 +35,9 @@ export default async function RequestsPage(props: {
         type: searchParams?.type as 'recharge' | 'redeem',
         sortBy: searchParams?.sortBy,
         sortOrder: searchParams?.sortOrder as 'asc' | 'desc',
-        search: searchParams?.search
+        search: searchParams?.search,
+        from: searchParams?.from,
+        to: searchParams?.to,
     };
 
     const { data, error } = await getAllRequests(filters);

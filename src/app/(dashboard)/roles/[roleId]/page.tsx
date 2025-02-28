@@ -1,15 +1,11 @@
 import { RoleManager } from "@/components/role-manager";
 import { getRole, getRoles } from "@/lib/actions";
 
-type Props = {
-    params: {
-        roleId: string
-    }
-}
-
-export default async function SingleRolePage({ params }: Props) {
-    const { roleId } = await params;
-    const { data: currentRole, error } = await getRole(roleId);
+export default async function SingleRolePage(props: {
+    params: Promise<{ roleId: string }>
+}) {
+    const params = await props.params;
+    const { data: currentRole, error } = await getRole(params.roleId);
     const { data: availableRoles } = await getRoles();
 
 

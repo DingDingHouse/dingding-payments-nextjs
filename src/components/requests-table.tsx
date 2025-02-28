@@ -31,6 +31,7 @@ import {
 import { Request, RequestStatus } from "@/app/(dashboard)/requests/type"
 import { approveRequest, rejectRequest } from "@/app/(dashboard)/requests/actions"
 import { toast } from "@/hooks/use-toast"
+import { useAppSelector } from "@/lib/redux/hooks"
 
 const statusVariants: Record<RequestStatus, { label: string, variant: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link" | "warning" | "success" }> = {
     pending: { label: "Pending", variant: "warning" },
@@ -38,108 +39,119 @@ const statusVariants: Record<RequestStatus, { label: string, variant: "default" 
     rejected: { label: "Rejected", variant: "destructive" },
 }
 
-const getRequestColumns = (onViewDetails: (request: Request) => void, onApprove: (request: Request) => void, onReject: (request: Request) => void): ColumnDef<Request>[] => [
-    {
-        accessorKey: 'createdAt',
-        header: 'Date',
-        cell: ({ row }) => (
-            <div className="flex items-center">
-                {new Date(row.getValue('createdAt')).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                })}
-            </div>
-        )
-    },
-    {
-        accessorKey: 'userId',
-        header: 'User',
-        cell: ({ row }) => {
-            const user = row.original.userId;
-            return (
-                <div className="flex items-center">
-                    {user.name} ({user.username})
-                </div>
-            );
-        }
-    },
-    {
-        accessorKey: 'type',
-        header: () => <div className="text-center">Type</div>,
-        cell: ({ getValue }) => {
-            const type = getValue() as string;
-            return (
-                <div className="flex justify-center">
-                    {type === 'deposit' ? (
-                        <StatusBadge status="Deposit" variant="transaction" />
-                    ) : (
-                        <StatusBadge status="Withdrawal" variant="transaction" />
-                    )}
-                </div>
-            );
-        }
-    },
-    {
-        accessorKey: 'amount',
-        header: 'Amount',
-        cell: ({ row }) => (
-            <div className="flex items-center">
-                {formatCurrency(row.getValue('amount'))}
-            </div>
-        )
-    },
-    {
-        accessorKey: 'status',
-        header: 'Status',
-        cell: ({ getValue }) => {
-            const status = getValue() as RequestStatus;
-            const { label, variant } = statusVariants[status];
-            return (
-                <StatusBadge status={label} variant={variant} />
-            );
-        }
-    },
-    {
-        accessorKey: 'approverId',
-        header: 'Processed By',
-        cell: ({ getValue }) => {
-            const approver = getValue() as Request['approverId'];
-            return (
-                <div className="flex items-center">
-                    {approver ? approver.name : '-'}
-                </div>
-            );
-        }
-    },
-    {
-        id: 'actions',
-        cell: ({ row }) => {
-            const request = row.original;
-            return (
-                <div className="flex justify-end gap-2">
-                    <Button onClick={() => onViewDetails(request)} size="sm" variant="ghost">
-                        <Eye className="h-4 w-4" />
-                    </Button>
 
-                    {request.status === 'pending' && (
-                        <>
-                            <Button onClick={() => onApprove(request)} size="sm" variant="ghost" className="text-green-600">
-                                <CheckCircle className="h-4 w-4" />
-                            </Button>
-                            <Button onClick={() => onReject(request)} size="sm" variant="ghost" className="text-red-600">
-                                <XCircle className="h-4 w-4" />
-                            </Button>
-                        </>
-                    )}
+const getRequestColumns = (
+    onViewDetails: (request: Request) => void,
+    onApprove: (request: Request) => void,
+    onReject: (request: Request) => void
+): ColumnDef<Request>[] => [
+        {
+            accessorKey: 'createdAt',
+            header: 'Date',
+            cell: ({ row }) => (
+                <div className="flex items-center">
+                    {new Date(row.getValue('createdAt')).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                    })}
                 </div>
-            );
-        }
-    }
-];
+            )
+        },
+        {
+            accessorKey: 'userId',
+            header: 'User',
+            cell: ({ row }) => {
+                const user = row.original.userId;
+                return (
+                    <div className="flex items-center">
+                        {user.name} ({user.username})
+                    </div>
+                );
+            }
+        },
+        {
+            accessorKey: 'type',
+            header: () => <div className="text-center">Type</div>,
+            cell: ({ getValue }) => {
+                const type = getValue() as string;
+                return (
+                    <div className="flex justify-center">
+                        {type === 'deposit' ? (
+                            <StatusBadge status="Deposit" variant="transaction" />
+                        ) : (
+                            <StatusBadge status="Withdrawal" variant="transaction" />
+                        )}
+                    </div>
+                );
+            }
+        },
+        {
+            accessorKey: 'amount',
+            header: 'Amount',
+            cell: ({ row }) => (
+                <div className="flex items-center">
+                    {formatCurrency(row.getValue('amount'))}
+                </div>
+            )
+        },
+        {
+            accessorKey: 'status',
+            header: 'Status',
+            cell: ({ getValue }) => {
+                const status = getValue() as RequestStatus;
+                const { label, variant } = statusVariants[status];
+                return (
+                    <StatusBadge status={label} variant={variant} />
+                );
+            }
+        },
+        {
+            accessorKey: 'approverId',
+            header: 'Processed By',
+            cell: ({ getValue }) => {
+                const approver = getValue() as Request['approverId'];
+                return (
+                    <div className="flex items-center">
+                        {approver ? approver.name : '-'}
+                    </div>
+                );
+            }
+        },
+        {
+            id: 'actions',
+            cell: ({ row }) => {
+                const request = row.original;
+                const canApprove = request.permissions?.includes('approve');
+                const canReject = request.permissions?.includes('reject');
 
+                return (
+                    <div className="flex justify-end gap-2">
+                        <Button onClick={() => onViewDetails(request)} size="sm" variant="ghost">
+                            <Eye className="h-4 w-4" />
+                        </Button>
+
+                        {request.status === 'pending' && (
+                            <>
+                                {canApprove && (
+                                    <Button onClick={() => onApprove(request)} size="sm" variant="ghost" className="text-green-600">
+                                        <CheckCircle className="h-4 w-4" />
+                                    </Button>
+                                )}
+                                {canReject && (
+                                    <Button onClick={() => onReject(request)} size="sm" variant="ghost" className="text-red-600">
+                                        <XCircle className="h-4 w-4" />
+                                    </Button>
+                                )}
+                            </>
+                        )}
+                    </div>
+                );
+            }
+        }
+    ];
 export default function RequestsTable({ data }: { data: Request[] }) {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -153,7 +165,6 @@ export default function RequestsTable({ data }: { data: Request[] }) {
     const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
     const [isDetailsOpen, setIsDetailsOpen] = useState(false);
     const [processingRequest, setProcessingRequest] = useState<string | null>(null);
-
     const [isApproveDialogOpen, setIsApproveDialogOpen] = useState(false);
     const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
     const [requestToProcess, setRequestToProcess] = useState<Request | null>(null);
@@ -164,11 +175,13 @@ export default function RequestsTable({ data }: { data: Request[] }) {
     };
 
     const handleApproveClick = (request: Request) => {
+        if (!request.permissions?.includes('approve')) return;
         setRequestToProcess(request);
         setIsApproveDialogOpen(true);
     };
 
     const handleRejectClick = (request: Request) => {
+        if (!request.permissions?.includes('reject')) return;
         setRequestToProcess(request);
         setIsRejectDialogOpen(true);
     };
@@ -242,6 +255,8 @@ export default function RequestsTable({ data }: { data: Request[] }) {
         handleApproveClick,
         handleRejectClick
     );
+
+
     return (
         <div className="space-y-6">
             <div className="mb-6 overflow-x-auto">
@@ -438,14 +453,27 @@ export default function RequestsTable({ data }: { data: Request[] }) {
 
                             {selectedRequest.status === 'pending' && (
                                 <div className="flex gap-2 justify-end">
-                                    <Button onClick={() => {
-                                        setIsDetailsOpen(false);
-                                        handleRejectClick(selectedRequest);
-                                    }} variant="destructive">Reject</Button>
-                                    <Button onClick={() => {
-                                        setIsDetailsOpen(false);
-                                        handleApproveClick(selectedRequest);
-                                    }}>Approve</Button>
+                                    {selectedRequest.permissions?.includes('reject') && (
+                                        <Button
+                                            onClick={() => {
+                                                setIsDetailsOpen(false);
+                                                handleRejectClick(selectedRequest);
+                                            }}
+                                            variant="destructive"
+                                        >
+                                            Reject
+                                        </Button>
+                                    )}
+                                    {selectedRequest.permissions?.includes('approve') && (
+                                        <Button
+                                            onClick={() => {
+                                                setIsDetailsOpen(false);
+                                                handleApproveClick(selectedRequest);
+                                            }}
+                                        >
+                                            Approve
+                                        </Button>
+                                    )}
                                 </div>
                             )}
                         </div>

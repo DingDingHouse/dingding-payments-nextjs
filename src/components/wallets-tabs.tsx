@@ -12,7 +12,6 @@ import { Tabs } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import { WalletDetails } from "@/components/wallet-details";
 import { QRCodeGrid } from "@/components/qr-code-grid";
-import { useSidebar } from "./ui/sidebar";
 
 interface Wallet {
     _id: string;
@@ -30,48 +29,57 @@ export function WalletTabs() {
     const [selectedWallet, setSelectedWallet] = useState<Wallet | null>(null);
     const { toast } = useToast();
     const router = useRouter();
-    const { state: sidebarState } = useSidebar();
 
+    // Add request deduplication
     useEffect(() => {
-        fetchAllWallets();
-    }, []);
+        let isSubscribed = true;
 
-    // Fetch wallet data
-    const fetchAllWallets = async () => {
-        try {
-            setLoading(true);
-            const { data, error } = await getWallets({
-                limit: 100,
-                status: 'active'
-            });
+        const fetchAllWallets = async () => {
+            try {
+                setLoading(true);
+                const { data, error } = await getWallets({
+                    limit: 100,
+                });
 
-            if (error) {
+                if (!isSubscribed) return;
+
+                if (error) {
+                    toast({
+                        title: "Error",
+                        description: error,
+                        variant: "destructive",
+                    });
+                } else if (data?.data) {
+                    const activeWallets = data.data.filter(
+                        (wallet: Wallet) => wallet.status === "active"
+                    );
+                    setAllWallets(activeWallets);
+
+                    // Select first wallet by default
+                    if (activeWallets.length > 0 && !selectedWallet) {
+                        setSelectedWallet(activeWallets[0]);
+                    }
+                }
+            } catch (error) {
+                if (!isSubscribed) return;
                 toast({
                     title: "Error",
-                    description: error,
+                    description: "Failed to load wallets",
                     variant: "destructive",
                 });
-            } else if (data?.data) {
-                const activeWallets = data.data.filter(
-                    (wallet: Wallet) => wallet.status === "active"
-                );
-                setAllWallets(activeWallets);
-
-                // Select first wallet by default
-                if (activeWallets.length > 0) {
-                    setSelectedWallet(activeWallets[0]);
+            } finally {
+                if (isSubscribed) {
+                    setLoading(false);
                 }
             }
-        } catch (error) {
-            toast({
-                title: "Error",
-                description: "Failed to load wallets",
-                variant: "destructive",
-            });
-        } finally {
-            setLoading(false);
-        }
-    };
+        };
+
+        fetchAllWallets();
+
+        return () => {
+            isSubscribed = false;
+        };
+    }, []);
 
     // Handle wallet selection
     const handleWalletSelect = (wallet: Wallet) => {

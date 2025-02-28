@@ -5,6 +5,8 @@ import { getDescendants } from "@/lib/actions";
 import { UserQuery } from "@/lib/types";
 
 
+export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 export default async function UsersPage(props: {
     searchParams?: Promise<{
