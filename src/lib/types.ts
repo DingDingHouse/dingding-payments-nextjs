@@ -214,11 +214,9 @@ export interface QRCodeQuery {
 export interface QRCode {
     _id: string;
     walletId: string;
-    url: string;
-    min?: number;
-    max?: number;
+    qrcode: string;
+    title: string;
     status: string;
-    title?: string;
     createdAt: string;
     updatedAt: string;
 }
