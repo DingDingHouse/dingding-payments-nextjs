@@ -36,11 +36,12 @@ export async function POST(request: Request) {
 
         // Set access token in cookie
         response.cookies.set('accessToken', accessToken, {
-            httpOnly: false, // Accessible via JavaScript
+            httpOnly: true, // Accessible via JavaScript
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'strict',
+            sameSite: 'lax',
             maxAge: expiresIn,
-            domain: config.domain
+            domain: config.domain,
+            path: '/'
 
         });
 
