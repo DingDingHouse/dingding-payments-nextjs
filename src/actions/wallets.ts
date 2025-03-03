@@ -16,7 +16,6 @@ export async function createWallet(data: FormData): Promise<ActionResponse<any>>
         const response = await fetch(`${config.server}/api/wallets`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`
             },
             body: data,
@@ -144,7 +143,6 @@ export async function updateWallet(id: string, data: FormData): Promise<ActionRe
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json',
             },
             body: data,
             credentials: 'include'
@@ -211,7 +209,6 @@ export async function addQR(walletId: string, formData: FormData): Promise<Actio
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json',
             },
             body: formData,
             credentials: 'include'
@@ -303,7 +300,6 @@ export async function updateQRCode(walletId: string, qrCodeId: string, formData:
             method: 'PUT',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json',
             },
             body: formData,
             credentials: 'include'
