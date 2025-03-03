@@ -15,6 +15,8 @@ export async function POST(request: Request) {
 
         const data = await apiResponse.json();
 
+        console.log(data);
+
         if (!apiResponse.ok) {
             return NextResponse.json(
                 { message: data.message || 'Login failed' },
@@ -36,11 +38,10 @@ export async function POST(request: Request) {
 
         // Set access token in cookie
         response.cookies.set('accessToken', accessToken, {
-            httpOnly: true, // Accessible via JavaScript
+            httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
+            sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
             maxAge: expiresIn,
-            domain: config.domain,
             path: '/'
 
         });
