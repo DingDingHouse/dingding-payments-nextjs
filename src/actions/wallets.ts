@@ -1,3 +1,6 @@
+"use server";
+
+
 import { config } from "@/lib/config";
 import getCookie from "@/lib/getCookie";
 import { ActionResponse, QRCode, QRCodeQuery, QRCodeResponse, WalletQRQuery, WalletQuery } from "@/lib/types";
