@@ -13,6 +13,7 @@ export async function createWallet(data: FormData): Promise<ActionResponse<any>>
         const response = await fetch(`${config.server}/api/wallets`, {
             method: 'POST',
             headers: {
+                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`
             },
             body: data,
@@ -139,7 +140,8 @@ export async function updateWallet(id: string, data: FormData): Promise<ActionRe
         const response = await fetch(`${config.server}/api/wallets/${id}`, {
             method: 'PUT',
             headers: {
-                'Authorization': `Bearer ${accessToken}`
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
             },
             body: data,
             credentials: 'include'
@@ -173,7 +175,8 @@ export async function deleteWallet(id: string): Promise<ActionResponse<any>> {
         const response = await fetch(`${config.server}/api/wallets/${id}`, {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${accessToken}`
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
             },
             credentials: 'include'
         });
@@ -205,6 +208,7 @@ export async function addQR(walletId: string, formData: FormData): Promise<Actio
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
             },
             body: formData,
             credentials: 'include'
@@ -295,7 +299,8 @@ export async function updateQRCode(walletId: string, qrCodeId: string, formData:
         const response = await fetch(`${config.server}/api/wallets/${walletId}/qrcodes/${qrCodeId}`, {
             method: 'PUT',
             headers: {
-                'Authorization': `Bearer ${accessToken}`
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
             },
             body: formData,
             credentials: 'include'
@@ -329,7 +334,8 @@ export async function deleteQRCode(walletId: string, qrCodeId: string): Promise<
         const response = await fetch(`${config.server}/api/wallets/${walletId}/qrcodes/${qrCodeId}`, {
             method: 'DELETE',
             headers: {
-                'Authorization': `Bearer ${accessToken}`
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
             },
             credentials: 'include'
         });
