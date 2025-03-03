@@ -1,6 +1,6 @@
 import { config } from "@/lib/config";
 import getCookie from "@/lib/getCookie";
-import { ActionResponse, QRCode, QRCodeQuery, WalletQRQuery, WalletQuery } from "@/lib/types";
+import { ActionResponse, QRCode, QRCodeQuery, QRCodeResponse, WalletQRQuery, WalletQuery } from "@/lib/types";
 
 
 export async function createWallet(data: FormData): Promise<ActionResponse<any>> {
@@ -229,7 +229,7 @@ export async function addQR(walletId: string, formData: FormData): Promise<Actio
     }
 }
 
-export async function getQRCodes(query: QRCodeQuery): Promise<ActionResponse<QRCode>> {
+export async function getQRCodes(query: QRCodeQuery): Promise<ActionResponse<QRCodeResponse>> {
     try {
         const accessToken = await getCookie('accessToken');
 

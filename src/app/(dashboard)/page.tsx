@@ -1,6 +1,7 @@
 import { getQRCodes, getWallets } from "@/actions/wallets";
 import { DepositInstructions } from "@/components/deposite-instruction";
 import { WalletTabs } from "@/components/wallets-tabs";
+import { ActionResponse, QRCodeResponse } from "@/lib/types";
 
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
@@ -25,7 +26,7 @@ export default async function PlayerHomePage(props: {
     const limit = Number(searchParams.limit) || 10;
 
     // Fetch QR codes for selected wallet
-    const { data: qrCodesResponse } = await getQRCodes({
+    const { data: qrCodesData, error: qrCodesError }: ActionResponse<QRCodeResponse> = await getQRCodes({
         walletId: selectedWalletId,
         page,
         limit,
@@ -39,7 +40,8 @@ export default async function PlayerHomePage(props: {
             <WalletTabs
                 walletData={walletsData.data}
                 selectedWalletId={selectedWalletId}
-                qrCodesData={qrCodesResponse}
+                qrCodesData={qrCodesData}
+                qrCodesError={qrCodesError}
             />
             <DepositInstructions />
         </div>

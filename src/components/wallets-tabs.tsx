@@ -5,6 +5,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { WalletDetails } from "@/components/wallet-details";
 import { QRCodeGrid } from "@/components/qr-code-grid";
+import { QRCodeResponse } from "@/lib/types";
 
 interface Wallet {
     _id: string;
@@ -19,29 +20,16 @@ interface Wallet {
 interface WalletTabsProps {
     walletData: Wallet[];
     selectedWalletId?: string;
-    qrCodesData: {
-        success: boolean;
-        message: string;
-        data: {
-            _id: string;
-            walletId: string;
-            title: string;
-            qrcode: string;
-            status: string;
-            createdAt: string;
-            updatedAt: string;
-            __v: number;
-        }[];
-        meta: {
-            total: number;
-            page: number;
-            limit: number;
-            pages: number;
-        };
-    };
+    qrCodesData: QRCodeResponse | null;
+    qrCodesError: string | null;
 }
 
-export function WalletTabs({ walletData, selectedWalletId, qrCodesData }: WalletTabsProps) {
+export function WalletTabs({
+    walletData,
+    selectedWalletId,
+    qrCodesData,
+    qrCodesError
+}: WalletTabsProps) {
     const activeWalletId = selectedWalletId || walletData[0]?._id;
     const selectedWallet = walletData.find(w => w._id === activeWalletId);
 
@@ -98,8 +86,10 @@ export function WalletTabs({ walletData, selectedWalletId, qrCodesData }: Wallet
                 <Card>
                     <WalletDetails wallet={selectedWallet} />
                     <CardContent className="space-y-6">
-                        <QRCodeGrid qrCodesData={qrCodesData} />
-
+                        <QRCodeGrid
+                            qrCodesData={qrCodesData}
+                            qrCodesError={qrCodesError}
+                        />
                         <div className="flex justify-center pt-4">
                             <Link href="/requests" passHref>
                                 <Button variant="outline">

@@ -8,43 +8,21 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, Download } from "lucide-react";
 import Link from "next/link";
+import { QRCodeData, QRCodeResponse } from "@/lib/types";
 
-interface QRCodeData {
-    _id: string;
-    walletId: string;
-    title: string;
-    qrcode: string;
-    status: string;
-    createdAt: string;
-    updatedAt: string;
-    __v: number;
-}
-
-interface QRCodeResponse {
-    success: boolean;
-    message: string;
-    data: QRCodeData[];
-    meta: {
-        total: number;
-        page: number;
-        limit: number;
-        pages: number;
-    };
-}
 
 interface QRCodeGridProps {
-    qrCodesData: QRCodeResponse;
+    qrCodesData: QRCodeResponse | null;
+    qrCodesError: string | null;
 }
 
-export function QRCodeGrid({ qrCodesData }: QRCodeGridProps) {
+export function QRCodeGrid({ qrCodesData, qrCodesError }: QRCodeGridProps) {
 
     const [selectedQR, setSelectedQR] = useState<QRCodeData | null>(null);
     const [isQRDialogOpen, setIsQRDialogOpen] = useState(false);
     const router = useRouter();
     const searchParams = useSearchParams();
     const currentPage = Number(searchParams.get('page')) || 1;
-
-    const { toast } = useToast();
 
 
     const handleQRClick = (qr: QRCodeData) => {
@@ -69,8 +47,24 @@ export function QRCodeGrid({ qrCodesData }: QRCodeGridProps) {
         document.body.removeChild(link);
     };
 
+    if (qrCodesError) {
+        return (
+            <div className="text-center p-8 border rounded-md bg-destructive/10">
+                <p className="text-destructive">Error loading QR codes: {qrCodesError}</p>
+            </div>
+        );
+    }
 
-    if (!qrCodesData.data.length) {
+    if (!qrCodesData || !qrCodesData.success) {
+        return (
+            <div className="text-center p-8 border rounded-md bg-muted/10">
+                <p className="text-muted-foreground">Unable to load QR codes. Please try again later.</p>
+            </div>
+        );
+    }
+
+
+    if (!qrCodesData.data?.length) {
         return (
             <div className="text-center p-8 border rounded-md bg-muted/10">
                 <p className="text-muted-foreground">No QR codes available for this payment method.</p>

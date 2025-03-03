@@ -16,6 +16,7 @@ export type ActionResponse<T> = {
     error: string | null;
 }
 
+
 export type Role = {
     _id: string;
     name: string;
@@ -219,4 +220,28 @@ export interface QRCode {
     status: string;
     createdAt: string;
     updatedAt: string;
+}
+
+export interface QRCodeData {
+    _id: string;
+    walletId: string;
+    title: string;
+    qrcode: string;
+    status: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
+}
+
+
+export interface QRCodeResponse {
+    success: boolean;
+    message: string;
+    data: QRCodeData[];
+    meta: {
+        total: number;
+        page: number;
+        limit: number;
+        pages: number;
+    };
 }
