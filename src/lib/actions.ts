@@ -28,7 +28,6 @@ export async function whoIam() {
             return { data: null, error: data.error.message || 'Failed to fetch user data' };
         }
 
-        console.log('User data:', data.data);
 
         return { data: data.data, error: null };
     } catch (error) {

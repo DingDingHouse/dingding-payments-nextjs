@@ -1,23 +1,29 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { ChevronLeft, ChevronRight, Download } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { getQRCodes } from "@/actions/wallets";
-import { QRCode } from "@/lib/types";
+import Link from "next/link";
 
-interface QRCodeGridProps {
+interface QRCodeData {
+    _id: string;
     walletId: string;
+    title: string;
+    qrcode: string;
+    status: string;
+    createdAt: string;
+    updatedAt: string;
+    __v: number;
 }
 
-// Define a proper response type to match what getQRCodes returns
 interface QRCodeResponse {
-    data: QRCode[];
+    success: boolean;
+    message: string;
+    data: QRCodeData[];
     meta: {
         total: number;
         page: number;
@@ -26,95 +32,35 @@ interface QRCodeResponse {
     };
 }
 
-export function QRCodeGrid({ walletId }: QRCodeGridProps) {
-    const [loading, setLoading] = useState(true);
-    const [qrCodes, setQrCodes] = useState<QRCode[]>([]);
-    const [selectedQR, setSelectedQR] = useState<QRCode | null>(null);
+interface QRCodeGridProps {
+    qrCodesData: QRCodeResponse;
+}
+
+export function QRCodeGrid({ qrCodesData }: QRCodeGridProps) {
+
+    const [selectedQR, setSelectedQR] = useState<QRCodeData | null>(null);
     const [isQRDialogOpen, setIsQRDialogOpen] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(10);
-    const [totalItems, setTotalItems] = useState(0);
-    const [totalPages, setTotalPages] = useState(1);
-    const { toast } = useToast();
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const currentPage = Number(searchParams.get('page')) || 1;
 
-    // Memoize the fetchQRCodes function
-    const fetchQRCodes = useCallback(async () => {
-        if (!walletId) return;
+    const { toast } = useToast();
 
-        setLoading(true);
-        try {
-            const { data, error } = await getQRCodes({
-                walletId,
-                page: currentPage,
-                limit: itemsPerPage,
-                status: 'active'
-            });
 
-            if (error) {
-                toast({
-                    title: "Error",
-                    description: error,
-                    variant: "destructive",
-                });
-                setQrCodes([]);
-            } else if (data) {
-                const responseData = data as unknown as QRCodeResponse;
-                setQrCodes(responseData.data || []);
-
-                if (responseData.meta) {
-                    setTotalItems(responseData.meta.total);
-                    setTotalPages(responseData.meta.pages);
-                } else {
-                    setTotalItems(responseData.data.length);
-                    setTotalPages(Math.ceil(responseData.data.length / itemsPerPage));
-                }
-            }
-        } catch (error) {
-            console.error('Error fetching QR codes:', error);
-            toast({
-                title: "Error",
-                description: "Failed to load QR codes",
-                variant: "destructive",
-            });
-        } finally {
-            setLoading(false);
-        }
-    }, [walletId, currentPage, itemsPerPage, toast]); // Include all dependencies
-
-    useEffect(() => {
-        fetchQRCodes();
-    }, [fetchQRCodes]);
-
-    // Event handlers and rendering code...
-    const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            setCurrentPage(currentPage - 1);
-        }
-    };
-
-    const handleNextPage = () => {
-        if (currentPage < totalPages) {
-            setCurrentPage(currentPage + 1);
-        }
-    };
-
-    const handleQRClick = (qr: QRCode) => {
+    const handleQRClick = (qr: QRCodeData) => {
         setSelectedQR(qr);
         setIsQRDialogOpen(true);
     };
 
     const handleCreateRequest = () => {
         setIsQRDialogOpen(false);
-        router.push(`/requests?type=deposit&walletId=${walletId}&qrId=${selectedQR?._id}`);
+        router.push(`/requests?type=deposit&walletId=${selectedQR?.walletId}&qrId=${selectedQR?._id}`);
     };
 
-    // Download QR code as image
     const handleDownloadQR = (e: React.MouseEvent) => {
         e.stopPropagation();
         if (!selectedQR) return;
 
-        // Create a temporary link to download the image
         const link = document.createElement('a');
         link.href = selectedQR.qrcode;
         link.download = `qr-code-${selectedQR?.title?.replace(/\s+/g, '-').toLowerCase() || 'qr-code'}.png`;
@@ -123,21 +69,8 @@ export function QRCodeGrid({ walletId }: QRCodeGridProps) {
         document.body.removeChild(link);
     };
 
-    // Loading skeleton
-    if (loading && qrCodes.length === 0) {
-        return (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                {Array.from({ length: 10 }).map((_, i) => (
-                    <div key={i} className="space-y-2 border rounded-md p-2">
-                        <Skeleton className="h-24 w-full" />
-                        <Skeleton className="h-3 w-3/4 mx-auto" />
-                    </div>
-                ))}
-            </div>
-        );
-    }
 
-    if (!loading && qrCodes.length === 0) {
+    if (!qrCodesData.data.length) {
         return (
             <div className="text-center p-8 border rounded-md bg-muted/10">
                 <p className="text-muted-foreground">No QR codes available for this payment method.</p>
@@ -145,11 +78,18 @@ export function QRCodeGrid({ walletId }: QRCodeGridProps) {
         );
     }
 
+    // Create new URLSearchParams for pagination links
+    const createPaginationLink = (page: number) => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('page', page.toString());
+        return `?${params.toString()}`;
+    };
+
     return (
         <>
             {/* QR Codes Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                {qrCodes.map((qr) => (
+                {qrCodesData.data.map((qr) => (
                     <div
                         key={qr._id}
                         className="cursor-pointer border rounded-md overflow-hidden hover:shadow-md transition-all bg-card"
@@ -163,7 +103,7 @@ export function QRCodeGrid({ walletId }: QRCodeGridProps) {
                                     fill
                                     className="p-1 object-contain"
                                     sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 20vw"
-                                    priority={currentPage === 1 && qrCodes.indexOf(qr) < 5}
+                                    priority={currentPage === 1}
                                 />
                             </div>
                             <p className="text-xs text-center font-medium truncate mt-2">{qr.title}</p>
@@ -173,35 +113,39 @@ export function QRCodeGrid({ walletId }: QRCodeGridProps) {
             </div>
 
             {/* Pagination */}
-            {totalPages > 1 && (
+            {qrCodesData.meta.pages > 1 && (
                 <div className="flex items-center justify-between gap-4 mt-6 pt-4 border-t">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handlePreviousPage}
-                        disabled={currentPage === 1 || loading}
-                        className="flex items-center gap-1"
-                    >
-                        <ChevronLeft className="h-4 w-4" />
-                        <span className="hidden sm:inline">Previous</span>
-                    </Button>
+                    <Link href={createPaginationLink(currentPage - 1)}
+                        className={currentPage <= 1 ? 'pointer-events-none opacity-50' : ''}>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex items-center gap-1"
+                            disabled={currentPage <= 1}
+                        >
+                            <ChevronLeft className="h-4 w-4" />
+                            <span className="hidden sm:inline">Previous</span>
+                        </Button>
+                    </Link>
 
                     <div className="text-sm text-muted-foreground">
                         <span className="font-medium text-foreground">{currentPage}</span>
-                        <span> of {totalPages} pages</span>
-                        <span className="hidden sm:inline"> • {totalItems} QR codes</span>
+                        <span> of {qrCodesData.meta.pages} pages</span>
+                        <span className="hidden sm:inline"> • {qrCodesData.meta.total} QR codes</span>
                     </div>
 
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleNextPage}
-                        disabled={currentPage === totalPages || loading}
-                        className="flex items-center gap-1"
-                    >
-                        <span className="hidden sm:inline">Next</span>
-                        <ChevronRight className="h-4 w-4" />
-                    </Button>
+                    <Link href={createPaginationLink(currentPage + 1)}
+                        className={currentPage >= qrCodesData.meta.pages ? 'pointer-events-none opacity-50' : ''}>
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex items-center gap-1"
+                            disabled={currentPage >= qrCodesData.meta.pages}
+                        >
+                            <span className="hidden sm:inline">Next</span>
+                            <ChevronRight className="h-4 w-4" />
+                        </Button>
+                    </Link>
                 </div>
             )}
 
