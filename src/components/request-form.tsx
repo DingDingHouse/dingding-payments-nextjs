@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Check, ChevronsUpDown, Search } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -18,6 +18,13 @@ import { Label } from "./ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
+import { useAppSelector } from "@/lib/hooks";
+import { Roles, User } from "@/lib/types";
+import { getDescendants } from "@/lib/actions";
+import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "./ui/command";
+import { cn } from "@/lib/utils";
+
 
 interface RequestFormProps {
     onClose: () => void;
@@ -86,8 +93,38 @@ export default function RequestForm({ onClose, initialWalletId, initialQrId }: R
     const [file, setFile] = useState<File | null>(null);
     const { toast } = useToast();
 
+    const currentUser = useAppSelector(state => state.users.currentUser);
+    const isPlayer = currentUser?.role.name === Roles.PLAYER;
+
+    const [players, setPlayers] = useState<User[]>([]);
+    const [selectedUserId, setSelectedUserId] = useState<string>("");
+    const [openCombobox, setOpenCombobox] = useState(false);
+    const [searchQuery, setSearchQuery] = useState("");
+
+
+    useEffect(() => {
+        if (!isPlayer) {
+            const fetchPlayers = async () => {
+                const { data, error } = await getDescendants({ role: 'player' });
+                if (!error && data) {
+                    setPlayers(data.data);
+                }
+            };
+            fetchPlayers();
+        }
+    }, [isPlayer]);
+
     // Simple validation function
     const validateForm = () => {
+        if (!isPlayer && !selectedUserId) {
+            toast({
+                title: "Validation Error",
+                description: "Please select a player",
+                variant: "destructive",
+            });
+            return false;
+        }
+
         if (!type) {
             toast({
                 title: "Validation Error",
@@ -117,9 +154,7 @@ export default function RequestForm({ onClose, initialWalletId, initialQrId }: R
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-
         if (!validateForm()) return;
-
         setIsLoading(true);
 
         try {
@@ -141,6 +176,10 @@ export default function RequestForm({ onClose, initialWalletId, initialQrId }: R
 
             if (file) {
                 formData.append("paymentScreenshot", file);
+            }
+
+            if (!isPlayer && selectedUserId) {
+                formData.append("userId", selectedUserId);
             }
 
             const response = await createRequest(formData);
@@ -207,6 +246,59 @@ export default function RequestForm({ onClose, initialWalletId, initialQrId }: R
                     Select whether you want to deposit or withdraw funds.
                 </p>
             </div>
+
+            {!isPlayer && (
+                <div className="space-y-2">
+                    <Label htmlFor="userId">Select Player</Label>
+                    <div className="relative">
+                        <div className="relative">
+                            <Input
+                                placeholder="Search players..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                className="mb-2"
+                            />
+                            <Search className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                        </div>
+                        <Select
+                            value={selectedUserId}
+                            onValueChange={setSelectedUserId}
+                            disabled={isLoading}
+                        >
+                            <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select a player" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {players
+                                    .filter(player =>
+                                        player.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                        player.username.toLowerCase().includes(searchQuery.toLowerCase())
+                                    )
+                                    .map((player) => (
+                                        <SelectItem
+                                            key={player._id}
+                                            value={player._id}
+                                        >
+                                            {player.name} ({player.username})
+                                        </SelectItem>
+                                    ))
+                                }
+                                {players.filter(player =>
+                                    player.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                                    player.username.toLowerCase().includes(searchQuery.toLowerCase())
+                                ).length === 0 && (
+                                        <div className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm text-muted-foreground">
+                                            No players found
+                                        </div>
+                                    )}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                        Select the player for whom you want to create the request.
+                    </p>
+                </div>
+            )}
 
             <div className="space-y-2">
                 <Label htmlFor="amount">Amount</Label>

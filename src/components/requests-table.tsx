@@ -31,7 +31,7 @@ import {
 import { Request, RequestStatus } from "@/app/(dashboard)/requests/type"
 import { approveRequest, rejectRequest } from "@/app/(dashboard)/requests/actions"
 import { toast } from "@/hooks/use-toast"
-import { useAppSelector } from "@/lib/redux/hooks"
+import { useAppSelector } from "@/lib/hooks"
 
 const statusVariants: Record<RequestStatus, { label: string, variant: "default" | "destructive" | "outline" | "secondary" | "ghost" | "link" | "warning" | "success" }> = {
     pending: { label: "Pending", variant: "warning" },
@@ -43,7 +43,8 @@ const statusVariants: Record<RequestStatus, { label: string, variant: "default" 
 const getRequestColumns = (
     onViewDetails: (request: Request) => void,
     onApprove: (request: Request) => void,
-    onReject: (request: Request) => void
+    onReject: (request: Request) => void,
+    currentUser: any
 ): ColumnDef<Request>[] => [
         {
             accessorKey: 'createdAt',
@@ -124,8 +125,7 @@ const getRequestColumns = (
             id: 'actions',
             cell: ({ row }) => {
                 const request = row.original;
-                const canApprove = request.permissions?.includes('approve');
-                const canReject = request.permissions?.includes('reject');
+                const isOwnRequest = currentUser?._id === request.userId._id;
 
                 return (
                     <div className="flex justify-end gap-2">
@@ -133,18 +133,14 @@ const getRequestColumns = (
                             <Eye className="h-4 w-4" />
                         </Button>
 
-                        {request.status === 'pending' && (
+                        {request.status === 'pending' && !isOwnRequest && (
                             <>
-                                {canApprove && (
-                                    <Button onClick={() => onApprove(request)} size="sm" variant="ghost" className="text-green-600">
-                                        <CheckCircle className="h-4 w-4" />
-                                    </Button>
-                                )}
-                                {canReject && (
-                                    <Button onClick={() => onReject(request)} size="sm" variant="ghost" className="text-red-600">
-                                        <XCircle className="h-4 w-4" />
-                                    </Button>
-                                )}
+                                <Button onClick={() => onApprove(request)} size="sm" variant="ghost" className="text-green-600">
+                                    <CheckCircle className="h-4 w-4" />
+                                </Button>
+                                <Button onClick={() => onReject(request)} size="sm" variant="ghost" className="text-red-600">
+                                    <XCircle className="h-4 w-4" />
+                                </Button>
                             </>
                         )}
                     </div>
@@ -152,6 +148,7 @@ const getRequestColumns = (
             }
         }
     ];
+
 export default function RequestsTable({ data }: { data: Request[] }) {
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -169,19 +166,19 @@ export default function RequestsTable({ data }: { data: Request[] }) {
     const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
     const [requestToProcess, setRequestToProcess] = useState<Request | null>(null);
 
+    const currentUser = useAppSelector(state => state.users.currentUser);
+
     const handleViewDetails = (request: Request) => {
         setSelectedRequest(request);
         setIsDetailsOpen(true);
     };
 
     const handleApproveClick = (request: Request) => {
-        if (!request.permissions?.includes('approve')) return;
         setRequestToProcess(request);
         setIsApproveDialogOpen(true);
     };
 
     const handleRejectClick = (request: Request) => {
-        if (!request.permissions?.includes('reject')) return;
         setRequestToProcess(request);
         setIsRejectDialogOpen(true);
     };
@@ -253,7 +250,8 @@ export default function RequestsTable({ data }: { data: Request[] }) {
     const columns = getRequestColumns(
         handleViewDetails,
         handleApproveClick,
-        handleRejectClick
+        handleRejectClick,
+        currentUser
     );
 
 
@@ -451,9 +449,9 @@ export default function RequestsTable({ data }: { data: Request[] }) {
                                 </div>
                             )}
 
-                            {selectedRequest.status === 'pending' && (
-                                <div className="flex gap-2 justify-end">
-                                    {selectedRequest.permissions?.includes('reject') && (
+                            {selectedRequest.status === 'pending' &&
+                                currentUser?._id !== selectedRequest.userId._id && (
+                                    <div className="flex gap-2 justify-end">
                                         <Button
                                             onClick={() => {
                                                 setIsDetailsOpen(false);
@@ -463,8 +461,6 @@ export default function RequestsTable({ data }: { data: Request[] }) {
                                         >
                                             Reject
                                         </Button>
-                                    )}
-                                    {selectedRequest.permissions?.includes('approve') && (
                                         <Button
                                             onClick={() => {
                                                 setIsDetailsOpen(false);
@@ -473,9 +469,8 @@ export default function RequestsTable({ data }: { data: Request[] }) {
                                         >
                                             Approve
                                         </Button>
-                                    )}
-                                </div>
-                            )}
+                                    </div>
+                                )}
                         </div>
                     )}
                 </DialogContent>

@@ -1,3 +1,8 @@
+export enum Roles {
+    ROOT = 'root',
+    PLAYER = 'player',
+}
+
 export type RolesResponse = {
     success: boolean;
     message: string;

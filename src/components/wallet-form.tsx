@@ -15,13 +15,13 @@ import { useRouter } from 'next/navigation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { createWallet } from '@/actions/wallets';
 import { useAppSelector } from '@/lib/hooks';
-import { Descendant } from '@/lib/types';
+import { Descendant, Roles } from '@/lib/types';
 import { getDescendants } from '@/lib/actions';
 
 export function WalletForm() {
 
     const user = useAppSelector(state => state.users.currentUser);
-    const isRoot = user?.role.name === 'root';
+    const isRoot = user?.role.name === Roles.ROOT;
     const [descendants, setDescendants] = useState<Descendant[]>([]);
 
 

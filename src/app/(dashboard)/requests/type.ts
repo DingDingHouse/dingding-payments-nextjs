@@ -25,7 +25,6 @@ export interface Request {
         username: string;
     };
     processedAt?: string;
-    permissions: string[]; // Add this field
 }
 export type RequestQuery = {
     page?: number;
