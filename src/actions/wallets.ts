@@ -137,8 +137,6 @@ export async function updateWallet(id: string, data: FormData): Promise<ActionRe
             return { data: null, error: 'No access token found' };
         }
 
-        console.log(data);
-
         const response = await fetch(`${config.server}/api/wallets/${id}`, {
             method: 'PUT',
             headers: {

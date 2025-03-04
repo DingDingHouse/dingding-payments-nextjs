@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -14,18 +14,40 @@ import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { createWallet } from '@/actions/wallets';
+import { useAppSelector } from '@/lib/hooks';
+import { Descendant } from '@/lib/types';
+import { getDescendants } from '@/lib/actions';
 
 export function WalletForm() {
+
+    const user = useAppSelector(state => state.users.currentUser);
+    const isRoot = user?.role.name === 'root';
+    const [descendants, setDescendants] = useState<Descendant[]>([]);
+
+
     const [open, setOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         status: 'active',
-        logo: null as File | null
+        logo: null as File | null,
+        referenceUserId: ''
     });
 
     const { toast } = useToast();
     const router = useRouter();
+
+    useEffect(() => {
+        if (isRoot) {
+            const fetchDescendants = async () => {
+                const { data, error } = await getDescendants({ role: 'admin' });
+                if (!error && data) {
+                    setDescendants(data.data);
+                }
+            };
+            fetchDescendants();
+        }
+    }, [isRoot]);
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
@@ -46,6 +68,10 @@ export function WalletForm() {
             form.append('status', formData.status);
             form.append('logo', formData.logo);
 
+            if (isRoot && formData.referenceUserId) {
+                form.append('referenceUserId', formData.referenceUserId);
+            }
+
             const { data, error } = await createWallet(form);
             if (error) {
                 toast({
@@ -61,7 +87,7 @@ export function WalletForm() {
                     title: "Success",
                     description: `Wallet "${data.name}" created successfully`
                 });
-                setFormData({ name: '', status: 'active', logo: null });
+                setFormData({ name: '', status: 'active', logo: null, referenceUserId: '' });
                 setOpen(false);
                 router.refresh();
             }
@@ -94,6 +120,29 @@ export function WalletForm() {
                         required
                     />
 
+                    {isRoot && (
+                        <Select
+                            value={formData.referenceUserId}
+                            onValueChange={(value) => setFormData(prev => ({
+                                ...prev,
+                                referenceUserId: value
+                            }))}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select Reference User" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {descendants.map((descendant) => (
+                                    <SelectItem
+                                        key={descendant._id}
+                                        value={descendant._id}
+                                    >
+                                        {descendant.name} ({descendant.username})
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    )}
                     <Select
                         value={formData.status}
                         onValueChange={(value) => setFormData(prev => ({ ...prev, status: value }))}

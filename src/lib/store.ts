@@ -1,16 +1,12 @@
-import { combineReducers, configureStore } from "@reduxjs/toolkit";
-import userReducer from "./features/userSlice";
-
-const rootReducer = combineReducers({
-    user: userReducer,
-});
+import { configureStore } from '@reduxjs/toolkit'
+import usersReducer from './features/users/UsersSlice'
 
 export const makeStore = () => {
-    const store = configureStore({
-        reducer: rootReducer,
-    });
-    return store;
-
+    return configureStore({
+        reducer: {
+            users: usersReducer,
+        },
+    })
 }
 
 // Infer the type of makeStore

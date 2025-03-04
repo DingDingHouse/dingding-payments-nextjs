@@ -39,7 +39,6 @@ export default async function SingleUserDescendantsPage(props: {
 
     const userId = params?.userId ?? '';
     const { data, error } = await getUserDescendants(userId, filters);
-    console.log(data)
 
     if (error) {
         return <div>Error: {error}</div>;

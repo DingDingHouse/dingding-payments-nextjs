@@ -1,3 +1,4 @@
+"use client"
 import { Users, FileText, BarChart3, GamepadIcon, Shield, ChevronUp, User2, Home, Settings, LogOut, Wallet } from "lucide-react"
 
 import {
@@ -50,7 +51,6 @@ export function AppSidebar({ user }: { user: User }) {
             };
         });
 
-    console.log("USE ", user)
 
     return (
         <Sidebar>

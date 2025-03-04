@@ -91,7 +91,6 @@ export async function signOut() {
         });
 
         const data = await response.json();
-        console.log('Signed out', data);
         if (!response.ok) {
             throw new Error(data.message || 'Failed to sign out');
         }

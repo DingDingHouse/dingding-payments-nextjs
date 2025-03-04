@@ -32,7 +32,6 @@ export default async function WalletsPage(props: {
     };
 
     const { data, error } = await getWallets(filters);
-    console.log(data);
     if (error) {
         return <div>Error: {error}</div>;
     }

@@ -245,3 +245,13 @@ export interface QRCodeResponse {
         pages: number;
     };
 }
+
+export interface Descendant {
+    _id: string;
+    name: string;
+    username: string;
+    role: {
+        _id: string;
+        name: string;
+    };
+}
