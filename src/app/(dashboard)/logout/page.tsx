@@ -3,14 +3,19 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
+import { useAppDispatch } from '@/lib/hooks';
+import { clearUser } from '@/lib/features/users/UsersSlice';
 
 export default function LogoutPage() {
     const router = useRouter();
     const { toast } = useToast();
+    const dispatch = useAppDispatch();
 
     useEffect(() => {
         async function logout() {
             try {
+                dispatch(clearUser());
+
                 const response = await fetch('/api/auth/logout', {
                     method: 'POST',
                     credentials: 'include'
@@ -26,7 +31,7 @@ export default function LogoutPage() {
                     description: data.message
                 });
 
-                router.push('/login');
+                window.location.href = '/login';  // ✅ Forces a full page reload
             } catch (error) {
                 toast({
                     variant: 'destructive',

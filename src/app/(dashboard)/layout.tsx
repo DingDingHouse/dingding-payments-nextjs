@@ -3,7 +3,6 @@ import { SidebarProvider } from "@/components/ui/sidebar"
 import { whoIam } from "@/lib/actions"
 import { redirect } from "next/navigation";
 import StoreProvider from "../StoreProvider";
-import Script from "next/script";
 import { TawkInit } from "@/components/tawk-init";
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
@@ -21,12 +20,6 @@ export default async function Layout({ children }: { children: React.ReactNode }
                 </main>
             </SidebarProvider>
             <TawkInit />
-            <Script
-                id="tawk-script"
-                src="https://embed.tawk.to/67c6df32b5d977190f13cebf/1ilgdfnm9"
-                strategy="afterInteractive"
-                crossOrigin="anonymous"
-            />
         </StoreProvider>
 
     )

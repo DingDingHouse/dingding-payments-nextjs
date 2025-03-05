@@ -18,6 +18,9 @@ export async function POST(request: NextRequest) {
         // Clear all auth cookies immediately
         res.cookies.delete('accessToken');
         res.cookies.delete('refreshToken');
+        res.cookies.delete('twk_uuid_67c6df32b5d977190f13cebf');
+        res.cookies.delete('TawkConnectionTime');
+        res.cookies.delete('twk_idm_key');
 
         // Extra coverage for cookies that might have specific paths
         res.cookies.set('accessToken', '', {

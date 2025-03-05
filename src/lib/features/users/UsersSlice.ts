@@ -15,7 +15,7 @@ interface Role {
     __v: number;
 }
 
-interface User {
+export interface User {
     _id: string;
     name: string;
     username: string;

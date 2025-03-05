@@ -1,14 +1,21 @@
-'use client'
+"use client";
 
-declare global {
-    interface Window {
-        Tawk_API?: any;
-        Tawk_LoadStart?: Date;
-    }
-}
+import { useAppSelector } from "@/lib/hooks";
+import { Roles } from "@/lib/types";
+import Script from "next/script";
 
 export function TawkInit() {
-    window.Tawk_API = window.Tawk_API || {};
-    window.Tawk_LoadStart = new Date();
-    return null;
+    const currentUser = useAppSelector((state) => state.users.currentUser);
+
+    if (!currentUser || currentUser.role.name !== Roles.PLAYER) {
+        return null;
+    }
+
+    return (
+        <Script
+            src="https://embed.tawk.to/67c6df32b5d977190f13cebf/1ilgdfnm9"
+            strategy="afterInteractive"
+            crossOrigin="anonymous"
+        />
+    );
 }
