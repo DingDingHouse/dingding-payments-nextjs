@@ -1,356 +1,352 @@
-"use server";
+// "use server";
 
+// import { config } from "@/lib/config";
+// import getCookie from "@/lib/getCookie";
+// import { ActionResponse, QRCode, QRCodeQuery, QRCodeResponse, WalletQRQuery, WalletQuery } from "@/lib/types";
 
-import { config } from "@/lib/config";
-import getCookie from "@/lib/getCookie";
-import { ActionResponse, QRCode, QRCodeQuery, QRCodeResponse, WalletQRQuery, WalletQuery } from "@/lib/types";
+// export async function createWallet(data: FormData): Promise<ActionResponse<any>> {
+//     try {
+//         const accessToken = await getCookie('accessToken');
+//         if (!accessToken) {
+//             return { data: null, error: 'No access token found' };
+//         }
 
+//         const response = await fetch(`${config.server}/api/wallets`, {
+//             method: 'POST',
+//             headers: {
+//                 'Authorization': `Bearer ${accessToken}`
+//             },
+//             body: data,
+//             credentials: 'include'
+//         });
 
-export async function createWallet(data: FormData): Promise<ActionResponse<any>> {
-    try {
-        const accessToken = await getCookie('accessToken');
-        if (!accessToken) {
-            return { data: null, error: 'No access token found' };
-        }
+//         const responseData = await response.json();
+//         if (!response.ok) {
+//             return {
+//                 data: null,
+//                 error: responseData.error?.message || 'Failed to create wallet'
+//             };
+//         }
 
-        const response = await fetch(`${config.server}/api/wallets`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            },
-            body: data,
-            credentials: 'include'
-        });
+//         return { data: responseData.data, error: null };
 
-        const responseData = await response.json();
-        if (!response.ok) {
-            return {
-                data: null,
-                error: responseData.error?.message || 'Failed to create wallet'
-            };
-        }
+//     } catch (error) {
+//         return {
+//             data: null,
+//             error: error instanceof Error ? error.message : 'Failed to create wallet'
+//         };
+//     }
+// }
 
-        return { data: responseData.data, error: null };
+// export async function getWallets(query?: WalletQuery): Promise<ActionResponse<any>> {
+//     try {
+//         const accessToken = await getCookie('accessToken');
+//         const params = new URLSearchParams();
+//         if (query) {
+//             Object.entries(query).forEach(([key, value]) => {
+//                 if (value !== undefined && value !== null) {
+//                     params.set(key, value.toString());
+//                 }
+//             });
+//         }
 
-    } catch (error) {
-        return {
-            data: null,
-            error: error instanceof Error ? error.message : 'Failed to create wallet'
-        };
-    }
-}
+//         const url = new URL(`${config.server}/api/wallets?${params.toString()}`);
 
-export async function getWallets(query?: WalletQuery): Promise<ActionResponse<any>> {
-    try {
-        const accessToken = await getCookie('accessToken');
-        const params = new URLSearchParams();
-        if (query) {
-            Object.entries(query).forEach(([key, value]) => {
-                if (value !== undefined && value !== null) {
-                    params.set(key, value.toString());
-                }
-            });
-        }
+//         const response = await fetch(url, {
+//             headers: {
+//                 'Authorization': `Bearer ${accessToken}`,
+//                 'Content-Type': 'application/json'
+//             },
+//             credentials: 'include',
+//             cache: 'force-cache', // Add caching
+//             next: { revalidate: 60 } // Revalidate every 60 seconds
+//         });
 
-        const url = new URL(`${config.server}/api/wallets?${params.toString()}`);
+//         const data = await response.json();
 
+//         if (!response.ok) {
+//             throw new Error(data.error?.message || 'Failed to fetch descendants');
+//         }
 
-        const response = await fetch(url, {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include',
-            cache: 'force-cache', // Add caching
-            next: { revalidate: 60 } // Revalidate every 60 seconds
-        });
+//         return {
+//             data: {
+//                 data: data.data,
+//                 meta: data.meta
+//             },
+//             error: null
+//         };
+//     } catch (error) {
+//         return {
+//             data: null,
+//             error: error instanceof Error ? error.message : 'Failed to fetch descendants'
+//         };
+//     }
+// }
 
-        const data = await response.json();
+// export async function getAWallet(walletId: string, query: WalletQRQuery): Promise<ActionResponse<any>> {
+//     try {
+//         const accessToken = await getCookie('accessToken');
+//         const params = new URLSearchParams();
+//         if (query) {
+//             Object.entries(query).forEach(([key, value]) => {
+//                 if (value !== undefined && value !== null) {
+//                     params.set(key, value.toString());
+//                 }
+//             });
+//         }
 
-        if (!response.ok) {
-            throw new Error(data.error?.message || 'Failed to fetch descendants');
-        }
+//         const url = new URL(`${config.server}/api/wallets/${walletId}?${params.toString()}`);
 
-        return {
-            data: {
-                data: data.data,
-                meta: data.meta
-            },
-            error: null
-        };
-    } catch (error) {
-        return {
-            data: null,
-            error: error instanceof Error ? error.message : 'Failed to fetch descendants'
-        };
-    }
-}
+//         const response = await fetch(url, {
+//             headers: {
+//                 'Authorization': `Bearer ${accessToken}`,
+//                 'Content-Type': 'application/json'
+//             },
+//             credentials: 'include'
+//         });
 
-export async function getAWallet(walletId: string, query: WalletQRQuery): Promise<ActionResponse<any>> {
-    try {
-        const accessToken = await getCookie('accessToken');
-        const params = new URLSearchParams();
-        if (query) {
-            Object.entries(query).forEach(([key, value]) => {
-                if (value !== undefined && value !== null) {
-                    params.set(key, value.toString());
-                }
-            });
-        }
+//         const data = await response.json();
 
-        const url = new URL(`${config.server}/api/wallets/${walletId}?${params.toString()}`);
+//         if (!response.ok) {
+//             throw new Error(data.error?.message || 'Failed to fetch descendants');
+//         }
 
+//         return {
+//             data: {
+//                 data: data.data,
+//                 meta: data.meta
+//             },
+//             error: null
+//         };
+//     } catch (error) {
+//         return {
+//             data: null,
+//             error: error instanceof Error ? error.message : 'Failed to fetch descendants'
+//         };
+//     }
+// }
 
-        const response = await fetch(url, {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json'
-            },
-            credentials: 'include'
-        });
+// export async function updateWallet(id: string, data: FormData): Promise<ActionResponse<any>> {
+//     try {
+//         const accessToken = await getCookie('accessToken');
+//         if (!accessToken) {
+//             return { data: null, error: 'No access token found' };
+//         }
 
-        const data = await response.json();
+//         const response = await fetch(`${config.server}/api/wallets/${id}`, {
+//             method: 'PUT',
+//             headers: {
+//                 'Authorization': `Bearer ${accessToken}`,
+//             },
+//             body: data,
+//             credentials: 'include'
+//         });
 
-        if (!response.ok) {
-            throw new Error(data.error?.message || 'Failed to fetch descendants');
-        }
+//         const responseData = await response.json();
 
-        return {
-            data: {
-                data: data.data,
-                meta: data.meta
-            },
-            error: null
-        };
-    } catch (error) {
-        return {
-            data: null,
-            error: error instanceof Error ? error.message : 'Failed to fetch descendants'
-        };
-    }
-}
+//         if (!response.ok) {
+//             return {
+//                 data: null,
+//                 error: responseData.error?.message || 'Failed to update wallet'
+//             };
+//         }
 
-export async function updateWallet(id: string, data: FormData): Promise<ActionResponse<any>> {
-    try {
-        const accessToken = await getCookie('accessToken');
-        if (!accessToken) {
-            return { data: null, error: 'No access token found' };
-        }
+//         return { data: responseData.data, error: null };
+//     } catch (error) {
+//         return {
+//             data: null,
+//             error: error instanceof Error ? error.message : 'Failed to update wallet'
+//         };
+//     }
+// }
 
-        const response = await fetch(`${config.server}/api/wallets/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-            },
-            body: data,
-            credentials: 'include'
-        });
+// export async function deleteWallet(id: string): Promise<ActionResponse<any>> {
+//     try {
+//         const accessToken = await getCookie('accessToken');
+//         if (!accessToken) {
+//             return { data: null, error: 'No access token found' };
+//         }
 
-        const responseData = await response.json();
+//         const response = await fetch(`${config.server}/api/wallets/${id}`, {
+//             method: 'DELETE',
+//             headers: {
+//                 'Authorization': `Bearer ${accessToken}`,
+//                 'Content-Type': 'application/json',
+//             },
+//             credentials: 'include'
+//         });
 
-        if (!response.ok) {
-            return {
-                data: null,
-                error: responseData.error?.message || 'Failed to update wallet'
-            };
-        }
+//         const responseData = await response.json();
 
-        return { data: responseData.data, error: null };
-    } catch (error) {
-        return {
-            data: null,
-            error: error instanceof Error ? error.message : 'Failed to update wallet'
-        };
-    }
-}
+//         if (!response.ok) {
+//             return {
+//                 data: null,
+//                 error: responseData.error?.message || 'Failed to delete wallet'
+//             };
+//         }
 
-export async function deleteWallet(id: string): Promise<ActionResponse<any>> {
-    try {
-        const accessToken = await getCookie('accessToken');
-        if (!accessToken) {
-            return { data: null, error: 'No access token found' };
-        }
+//         return { data: responseData.data, error: null };
+//     } catch (error) {
+//         return {
+//             data: null,
+//             error: error instanceof Error ? error.message : 'Failed to delete wallet'
+//         };
+//     }
+// }
 
-        const response = await fetch(`${config.server}/api/wallets/${id}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include'
-        });
+// export async function addQR(walletId: string, formData: FormData): Promise<ActionResponse<any>> {
+//     try {
+//         const accessToken = await getCookie('accessToken');
+//         const url = `${config.server}/api/wallets/${walletId}/qrcodes`;
 
-        const responseData = await response.json();
+//         const response = await fetch(url, {
+//             method: 'POST',
+//             headers: {
+//                 'Authorization': `Bearer ${accessToken}`,
+//             },
+//             body: formData,
+//             credentials: 'include'
+//         });
 
-        if (!response.ok) {
-            return {
-                data: null,
-                error: responseData.error?.message || 'Failed to delete wallet'
-            };
-        }
+//         const data = await response.json();
 
-        return { data: responseData.data, error: null };
-    } catch (error) {
-        return {
-            data: null,
-            error: error instanceof Error ? error.message : 'Failed to delete wallet'
-        };
-    }
-}
+//         if (!response.ok) {
+//             throw new Error(data.error?.message || 'Failed to create QR code');
+//         }
 
-export async function addQR(walletId: string, formData: FormData): Promise<ActionResponse<any>> {
-    try {
-        const accessToken = await getCookie('accessToken');
-        const url = `${config.server}/api/wallets/${walletId}/qrcodes`;
+//         return {
+//             data: data.data,
+//             error: null
+//         };
 
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-            },
-            body: formData,
-            credentials: 'include'
-        });
+//     } catch (error) {
+//         return {
+//             data: null,
+//             error: error instanceof Error ? error.message : 'Failed to create QR code'
+//         };
+//     }
+// }
 
-        const data = await response.json();
+// export async function getQRCodes(query: QRCodeQuery): Promise<ActionResponse<QRCodeResponse>> {
+//     try {
+//         const accessToken = await getCookie('accessToken');
 
-        if (!response.ok) {
-            throw new Error(data.error?.message || 'Failed to create QR code');
-        }
+//         if (!accessToken) {
+//             return { data: null, error: 'No access token found' };
+//         }
 
-        return {
-            data: data.data,
-            error: null
-        };
+//         // Build query string
+//         const params = new URLSearchParams();
+//         if (query.page) params.append('page', query.page.toString());
+//         if (query.limit) params.append('limit', query.limit.toString());
+//         if (query.status) params.append('status', query.status);
+//         if (query.search) params.append('search', query.search);
+//         if (query.sortBy) params.append('sortBy', query.sortBy);
+//         if (query.sortOrder) params.append('sortOrder', query.sortOrder);
 
-    } catch (error) {
-        return {
-            data: null,
-            error: error instanceof Error ? error.message : 'Failed to create QR code'
-        };
-    }
-}
+//         const url = `${config.server}/api/wallets/${query.walletId}/qrcodes?${params.toString()}`;
 
-export async function getQRCodes(query: QRCodeQuery): Promise<ActionResponse<QRCodeResponse>> {
-    try {
-        const accessToken = await getCookie('accessToken');
+//         const response = await fetch(url, {
+//             method: 'GET',
+//             headers: {
+//                 'Authorization': `Bearer ${accessToken}`,
+//                 'Content-Type': 'application/json',
+//             },
+//             credentials: 'include',
+//             cache: 'force-cache',
+//             next: {
+//                 revalidate: 30, // Cache for 30 seconds
+//                 tags: [`wallet-${query.walletId}-qrcodes`]
+//             }
+//         });
 
-        if (!accessToken) {
-            return { data: null, error: 'No access token found' };
-        }
+//         const result = await response.json();
 
-        // Build query string
-        const params = new URLSearchParams();
-        if (query.page) params.append('page', query.page.toString());
-        if (query.limit) params.append('limit', query.limit.toString());
-        if (query.status) params.append('status', query.status);
-        if (query.search) params.append('search', query.search);
-        if (query.sortBy) params.append('sortBy', query.sortBy);
-        if (query.sortOrder) params.append('sortOrder', query.sortOrder);
+//         if (!response.ok) {
+//             return {
+//                 data: null,
+//                 error: result.error?.message || `Failed to fetch QR codes: ${response.status}`
+//             };
+//         }
 
-        const url = `${config.server}/api/wallets/${query.walletId}/qrcodes?${params.toString()}`;
+//         return {
+//             data: result,
+//             error: null,
+//             message: result.message
+//         };
+//     } catch (error) {
+//         return {
+//             data: null,
+//             error: error instanceof Error ? error.message : 'Failed to fetch QR codes'
+//         };
+//     }
+// }
 
-        const response = await fetch(url, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include',
-            cache: 'force-cache',
-            next: {
-                revalidate: 30, // Cache for 30 seconds
-                tags: [`wallet-${query.walletId}-qrcodes`]
-            }
-        });
+// // Add these functions to your existing actions.ts file
+// export async function updateQRCode(walletId: string, qrCodeId: string, formData: FormData): Promise<ActionResponse<any>> {
+//     try {
+//         const accessToken = await getCookie('accessToken');
+//         if (!accessToken) {
+//             return { data: null, error: 'No access token found' };
+//         }
 
-        const result = await response.json();
+//         const response = await fetch(`${config.server}/api/wallets/${walletId}/qrcodes/${qrCodeId}`, {
+//             method: 'PUT',
+//             headers: {
+//                 'Authorization': `Bearer ${accessToken}`,
+//             },
+//             body: formData,
+//             credentials: 'include'
+//         });
 
-        if (!response.ok) {
-            return {
-                data: null,
-                error: result.error?.message || `Failed to fetch QR codes: ${response.status}`
-            };
-        }
+//         const responseData = await response.json();
 
-        return {
-            data: result,
-            error: null,
-            message: result.message
-        };
-    } catch (error) {
-        return {
-            data: null,
-            error: error instanceof Error ? error.message : 'Failed to fetch QR codes'
-        };
-    }
-}
+//         if (!response.ok) {
+//             return {
+//                 data: null,
+//                 error: responseData.error?.message || 'Failed to update QR code'
+//             };
+//         }
 
-// Add these functions to your existing actions.ts file
-export async function updateQRCode(walletId: string, qrCodeId: string, formData: FormData): Promise<ActionResponse<any>> {
-    try {
-        const accessToken = await getCookie('accessToken');
-        if (!accessToken) {
-            return { data: null, error: 'No access token found' };
-        }
+//         return { data: responseData.data, error: null };
+//     } catch (error) {
+//         return {
+//             data: null,
+//             error: error instanceof Error ? error.message : 'Failed to update QR code'
+//         };
+//     }
+// }
 
-        const response = await fetch(`${config.server}/api/wallets/${walletId}/qrcodes/${qrCodeId}`, {
-            method: 'PUT',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-            },
-            body: formData,
-            credentials: 'include'
-        });
+// export async function deleteQRCode(walletId: string, qrCodeId: string): Promise<ActionResponse<any>> {
+//     try {
+//         const accessToken = await getCookie('accessToken');
+//         if (!accessToken) {
+//             return { data: null, error: 'No access token found' };
+//         }
 
-        const responseData = await response.json();
+//         const response = await fetch(`${config.server}/api/wallets/${walletId}/qrcodes/${qrCodeId}`, {
+//             method: 'DELETE',
+//             headers: {
+//                 'Authorization': `Bearer ${accessToken}`,
+//                 'Content-Type': 'application/json',
+//             },
+//             credentials: 'include'
+//         });
 
-        if (!response.ok) {
-            return {
-                data: null,
-                error: responseData.error?.message || 'Failed to update QR code'
-            };
-        }
+//         const responseData = await response.json();
 
-        return { data: responseData.data, error: null };
-    } catch (error) {
-        return {
-            data: null,
-            error: error instanceof Error ? error.message : 'Failed to update QR code'
-        };
-    }
-}
+//         if (!response.ok) {
+//             return {
+//                 data: null,
+//                 error: responseData.error?.message || 'Failed to delete QR code'
+//             };
+//         }
 
-export async function deleteQRCode(walletId: string, qrCodeId: string): Promise<ActionResponse<any>> {
-    try {
-        const accessToken = await getCookie('accessToken');
-        if (!accessToken) {
-            return { data: null, error: 'No access token found' };
-        }
-
-        const response = await fetch(`${config.server}/api/wallets/${walletId}/qrcodes/${qrCodeId}`, {
-            method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-                'Content-Type': 'application/json',
-            },
-            credentials: 'include'
-        });
-
-        const responseData = await response.json();
-
-        if (!response.ok) {
-            return {
-                data: null,
-                error: responseData.error?.message || 'Failed to delete QR code'
-            };
-        }
-
-        return { data: responseData.data, error: null };
-    } catch (error) {
-        return {
-            data: null,
-            error: error instanceof Error ? error.message : 'Failed to delete QR code'
-        };
-    }
-}
+//         return { data: responseData.data, error: null };
+//     } catch (error) {
+//         return {
+//             data: null,
+//             error: error instanceof Error ? error.message : 'Failed to delete QR code'
+//         };
+//     }
+// }

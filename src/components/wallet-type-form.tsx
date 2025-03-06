@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -22,14 +22,15 @@ import {
 import { useAppSelector } from "@/lib/hooks";
 import { Descendant, Roles } from "@/lib/types";
 import { getDescendants } from "@/lib/actions";
-import { createWallet } from "@/app/(dashboard)/wallets/actions";
+import {
+  createWallet,
+  createWalletType,
+} from "@/app/(dashboard)/wallets/actions";
 
-export function WalletForm() {
+export function WalletTypeForm() {
   const user = useAppSelector((state) => state.users.currentUser);
   const isRoot = user?.role.name === Roles.ROOT;
   const [descendants, setDescendants] = useState<Descendant[]>([]);
-  // get the params from the URL
-  const params = useParams<{ walletTypeId: string }>();
 
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -73,13 +74,12 @@ export function WalletForm() {
       form.append("name", formData.name);
       form.append("status", formData.status);
       form.append("logo", formData.logo);
-      form.append("type", params.walletTypeId);
 
       if (isRoot && formData.referenceUserId) {
         form.append("referenceUserId", formData.referenceUserId);
       }
 
-      const { data, error } = await createWallet(form, params.walletTypeId);
+      const { data, error } = await createWalletType(form);
       if (error) {
         toast({
           variant: "destructive",
@@ -117,11 +117,11 @@ export function WalletForm() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Add Wallet</Button>
+        <Button>Add Wallet Type</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create New Wallet</DialogTitle>
+          <DialogTitle>Create New Wallet Type</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
