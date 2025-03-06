@@ -1,6 +1,7 @@
 import { getQRCodes, getWallets } from "@/actions/wallets";
 import { DepositInstructions } from "@/components/deposite-instruction";
 import { GlowingBackground } from "@/components/glow-background";
+import SupportButton from "@/components/support-button";
 import { Badge } from "@/components/ui/badge";
 import { WalletTabs } from "@/components/wallets-tabs";
 import { ActionResponse, QRCodeResponse } from "@/lib/types";
@@ -69,19 +70,7 @@ export default async function PlayerHomePage(props: {
                                 </div>
                             </div>
                         </Link>
-                        <Link href="/support" className="flex-1">
-                            <div className="bg-[rgba(0,0,0,0.4)] backdrop-blur-md border border-[#2C73D2]/30 rounded-xl p-4 shadow-lg hover:border-[#2C73D2]/60 transform transition hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(44,115,210,0.3)] h-full">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2.5 bg-gradient-to-br from-[#4FB286] to-[#2C73D2] rounded-full shadow-lg">
-                                        <Sparkles className="h-5 w-5 text-white" />
-                                    </div>
-                                    <div>
-                                        <p className="font-semibold text-white">Support</p>
-                                        <p className="text-[#8EACCD] text-xs">Get help</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </Link>
+                        <SupportButton />
                     </div>
 
                     <Link href="/logout" className="block w-full">
