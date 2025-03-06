@@ -67,7 +67,7 @@ export function WalletDetails({ wallet }: WalletDetailsProps) {
                             <div className="flex justify-between items-center">
                                 <p className="text-xs text-[#8EACCD] mb-1">Account Name</p>
                                 <button
-                                    onClick={() => handleCopy(wallet.accountName || '')}
+                                    onClick={() => copyToClipboard(wallet.accountName || '')}
                                     className="p-1 hover:bg-[#2C73D2]/20 rounded-md"
                                 >
                                     <Copy className="h-3.5 w-3.5 text-[#8EACCD]" />
@@ -82,7 +82,7 @@ export function WalletDetails({ wallet }: WalletDetailsProps) {
                             <div className="flex justify-between items-center">
                                 <p className="text-xs text-[#8EACCD] mb-1">Account Number</p>
                                 <button
-                                    onClick={() => handleCopy(wallet.accountNumber || '')}
+                                    onClick={() => copyToClipboard(wallet.accountNumber || '')}
                                     className="p-1 hover:bg-[#2C73D2]/20 rounded-md"
                                 >
                                     <Copy className="h-3.5 w-3.5 text-[#8EACCD]" />
