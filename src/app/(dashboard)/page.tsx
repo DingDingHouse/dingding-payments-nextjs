@@ -1,4 +1,3 @@
-import { getQRCodes, getWallets } from "@/actions/wallets";
 import { DepositInstructions } from "@/components/deposite-instruction";
 import { GlowingBackground } from "@/components/glow-background";
 import SupportButton from "@/components/support-button";
@@ -8,6 +7,7 @@ import { ActionResponse, QRCodeResponse } from "@/lib/types";
 import { Coins, FileText, LogOut, Sparkles, Star } from "lucide-react";
 import Image from 'next/image';
 import Link from "next/link";
+import { getQRCodes, getWallets } from "./wallets/actions";
 
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';

@@ -57,7 +57,7 @@ export default async function WalletsPage(props: {
       <div className="flex items-center justify-between gap-4 mb-6">
         <div className="mb-6 overflow-x-auto">
           <div className="flex gap-2 min-w-max">
-            {walletTypes?.map((walletType) => (
+            {walletTypes?.map((walletType: any) => (
               <Button
                 key={walletType._id}
                 asChild
