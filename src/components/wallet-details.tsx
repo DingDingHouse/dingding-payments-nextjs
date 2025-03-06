@@ -1,6 +1,6 @@
 "use client";
 
-import { Copy } from "lucide-react";
+import { BanknoteIcon, Copy } from "lucide-react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { CardHeader } from "@/components/ui/card";
@@ -23,85 +23,76 @@ interface WalletDetailsProps {
 export function WalletDetails({ wallet }: WalletDetailsProps) {
     const { toast } = useToast();
 
-    const handleCopy = (text: string, label: string) => {
+    const copyToClipboard = (text: string) => {
         navigator.clipboard.writeText(text);
         toast({
             title: "Copied!",
-            description: `${label} copied to clipboard`,
+            description: `copied to clipboard`,
         });
     };
 
+    // Only show the details section if we have account details
+    if (!wallet.accountName && !wallet.accountNumber && !wallet.bankName) {
+        return null;
+    }
+
     return (
         <>
-            <CardHeader className="flex flex-row items-center gap-4 pb-2">
-                <div className="relative h-12 w-12 shrink-0">
-                    <Image
-                        src={wallet.logo}
-                        alt={wallet.name}
-                        fill
-                        className="rounded-full object-cover"
-                    />
-                </div>
-                <div>
-                    <h2 className="text-xl font-medium">{wallet.name}</h2>
-                    <p className="text-muted-foreground text-sm">
-                        Select a QR code below to make a payment
-                    </p>
-                </div>
-            </CardHeader>
-
-            {wallet.accountNumber && (
-                <div className="px-6 pt-2">
-                    <div className="border rounded-md p-4 bg-secondary/20 space-y-3">
-                        <h3 className="font-medium">Account Details</h3>
-
-                        <div className="grid grid-cols-2 gap-2">
-                            <div className="text-sm text-muted-foreground">Bank Name:</div>
-                            <div className="text-sm font-medium flex items-center justify-between">
-                                {wallet.bankName}
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-6 w-6"
-                                    onClick={() => handleCopy(wallet.bankName || "", "Bank name")}
-                                >
-                                    <Copy className="h-3 w-3" />
-                                </Button>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-2">
-                            <div className="text-sm text-muted-foreground">Account Name:</div>
-                            <div className="text-sm font-medium flex items-center justify-between">
-                                {wallet.accountName}
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-6 w-6"
-                                    onClick={() => handleCopy(wallet.accountName || "", "Account name")}
-                                >
-                                    <Copy className="h-3 w-3" />
-                                </Button>
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-2 gap-2">
-                            <div className="text-sm text-muted-foreground">Account Number:</div>
-                            <div className="text-sm font-medium flex items-center justify-between">
-                                {wallet.accountNumber}
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-6 w-6"
-                                    onClick={() => handleCopy(wallet.accountNumber || "", "Account number")}
-                                >
-                                    <Copy className="h-3 w-3" />
-                                </Button>
-                            </div>
-                        </div>
+            <div className="bg-[#0A1149] rounded-xl border border-[#2C73D2]/20 p-4">
+                <div className="flex items-center gap-3 mb-4">
+                    <div className="relative h-10 w-10 bg-white rounded-full overflow-hidden">
+                        <Image
+                            src={wallet.logo}
+                            alt={wallet.name}
+                            fill
+                            className="object-contain p-1"
+                        />
+                    </div>
+                    <div>
+                        <h3 className="font-bold text-white">{wallet.name}</h3>
+                        <p className="text-xs text-[#8EACCD]">Account Details</p>
                     </div>
                 </div>
-            )}
+
+                <div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
+                    {wallet.bankName && (
+                        <div className="bg-[rgba(44,115,210,0.1)] rounded-lg p-3">
+                            <p className="text-xs text-[#8EACCD] mb-1">Bank Name</p>
+                            <p className="text-white">{wallet.bankName}</p>
+                        </div>
+                    )}
+
+                    {wallet.accountName && (
+                        <div className="bg-[rgba(44,115,210,0.1)] rounded-lg p-3">
+                            <div className="flex justify-between items-center">
+                                <p className="text-xs text-[#8EACCD] mb-1">Account Name</p>
+                                <button
+                                    onClick={() => copyToClipboard(wallet.accountName || '')}
+                                    className="p-1 hover:bg-[#2C73D2]/20 rounded-md"
+                                >
+                                    <Copy className="h-3.5 w-3.5 text-[#8EACCD]" />
+                                </button>
+                            </div>
+                            <p className="text-white">{wallet.accountName}</p>
+                        </div>
+                    )}
+
+                    {wallet.accountNumber && (
+                        <div className="bg-[rgba(44,115,210,0.1)] rounded-lg p-3">
+                            <div className="flex justify-between items-center">
+                                <p className="text-xs text-[#8EACCD] mb-1">Account Number</p>
+                                <button
+                                    onClick={() => copyToClipboard(wallet.accountNumber || '')}
+                                    className="p-1 hover:bg-[#2C73D2]/20 rounded-md"
+                                >
+                                    <Copy className="h-3.5 w-3.5 text-[#8EACCD]" />
+                                </button>
+                            </div>
+                            <p className="text-white font-mono">{wallet.accountNumber}</p>
+                        </div>
+                    )}
+                </div>
+            </div>
         </>
     );
 }

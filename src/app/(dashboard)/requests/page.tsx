@@ -3,6 +3,7 @@ import { RequestQuery } from "./type";
 import { getAllRequests } from "./actions";
 import RequestsTable from "@/components/requests-table";
 import { CreateRequestButton } from "@/components/request-form";
+import BackToHome from "@/components/back-to-home";
 
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
@@ -47,6 +48,8 @@ export default async function RequestsPage(props: {
 
     return (
         <div className="p-4 sm:p-10">
+            <BackToHome />
+
             <div className="flex items-center justify-between gap-4 mb-6">
                 <h1 className="text-2xl font-bold">Requests</h1>
                 <CreateRequestButton

@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { WalletDetails } from "@/components/wallet-details";
 import { QRCodeGrid } from "@/components/qr-code-grid";
 import { QRCodeResponse } from "@/lib/types";
+import { Wallet2 } from "lucide-react";
 
 interface Wallet {
     _id: string;
@@ -37,68 +38,70 @@ export function WalletTabs({
 
     if (walletData.length === 0) {
         return (
-            <Card>
-                <CardContent className="p-6 text-center">
-                    <h2 className="text-xl font-medium mb-2">No Payment Methods Available</h2>
-                    <p className="text-muted-foreground">
-                        Please contact support to set up payment methods.
-                    </p>
-                </CardContent>
-            </Card>
+            <div className="text-center py-12">
+                <div className="inline-flex justify-center items-center w-16 h-16 rounded-full bg-[#2C73D2]/30 mb-4">
+                    <Wallet2 className="h-8 w-8 text-[#8EACCD]" />
+                </div>
+                <h2 className="text-xl font-bold text-white mb-2">No Payment Methods Available</h2>
+                <p className="text-[#8EACCD] max-w-md mx-auto mb-6">
+                    Please contact support to set up payment methods for your account.
+                </p>
+                <Button className="bg-[#2C73D2] hover:bg-[#2C73D2]/80 text-white">
+                    Contact Support
+                </Button>
+            </div>
         );
     }
 
     return (
-        <div className="w-full max-w-full overflow-x-hidden">
-            <Card className="mb-6 border-b-0 rounded-b-none">
-                <CardContent className="p-3 sm:p-4 bg-muted/30">
-                    <div className="flex flex-wrap gap-2">
-                        {walletData.map((wallet) => (
-                            <Link
-                                key={wallet._id}
-                                href={`?walletId=${wallet._id}`}
-                                className={cn(
-                                    "flex items-center gap-2 px-3 py-2 rounded-lg border",
-                                    "text-sm font-medium transition",
-                                    "focus:outline-none focus-visible:ring-2 focus-visible:ring-primary",
-                                    "min-w-0 max-w-full",
-                                    activeWalletId === wallet._id
-                                        ? "bg-primary text-primary-foreground shadow-sm"
-                                        : "bg-card text-card-foreground hover:brightness-95"
-                                )}
-                            >
-                                <div className="relative h-6 w-6 shrink-0">
-                                    <Image
-                                        src={wallet.logo}
-                                        alt={wallet.name}
-                                        fill
-                                        className="rounded-full object-cover"
-                                    />
-                                </div>
-                                <span className="truncate">{wallet.name}</span>
-                            </Link>
-                        ))}
-                    </div>
-                </CardContent>
-            </Card>
+        <div className="space-y-6">
+            {/* Wallet tabs - horizontal scrollable */}
+            <div className="flex overflow-x-auto pb-2 gap-2 scrollbar-hide -mx-1 px-1">
+                {walletData.map((wallet) => (
+                    <Link
+                        key={wallet._id}
+                        href={`?walletId=${wallet._id}`}
+                        className={cn(
+                            "flex items-center gap-3 px-4 py-3 rounded-xl whitespace-nowrap transition-all",
+                            activeWalletId === wallet._id
+                                ? "bg-[#2C73D2] text-white border border-[#2C73D2]"
+                                : "bg-[#0A1149] border border-[#2C73D2]/20 text-[#8EACCD] hover:border-[#2C73D2]/50"
+                        )}
+                    >
+                        <div className="relative h-8 w-8 shrink-0">
+                            <div className="absolute inset-0 rounded-full bg-white/10 backdrop-blur-sm"></div>
+                            <Image
+                                src={wallet.logo}
+                                alt={wallet.name}
+                                fill
+                                className="p-1 rounded-full object-contain"
+                            />
+                        </div>
+                        <span className="font-medium">{wallet.name}</span>
+                    </Link>
+                ))}
+            </div>
 
+            {/* Selected wallet details */}
             {selectedWallet && (
-                <Card>
+                <div className="space-y-6">
                     <WalletDetails wallet={selectedWallet} />
-                    <CardContent className="space-y-6">
+
+                    <div className="border-t border-[#2C73D2]/20 pt-6">
                         <QRCodeGrid
                             qrCodesData={qrCodesData}
                             qrCodesError={qrCodesError}
                         />
-                        <div className="flex justify-center pt-4">
-                            <Link href="/requests" passHref>
-                                <Button variant="outline">
-                                    View My Payment Requests
-                                </Button>
-                            </Link>
-                        </div>
-                    </CardContent>
-                </Card>
+                    </div>
+
+                    <div className="flex justify-center pt-4 border-t border-[#2C73D2]/20">
+                        <Link href="/requests" passHref>
+                            <Button variant="outline" className="border-[#2C73D2]/50 text-[#8EACCD] hover:bg-[#2C73D2]/20">
+                                View My Payment Requests
+                            </Button>
+                        </Link>
+                    </div>
+                </div>
             )}
         </div>
     );
