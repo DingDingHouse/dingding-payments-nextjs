@@ -5,6 +5,7 @@ import WalletsTable from "@/components/wallets-table";
 import { UserQuery } from "@/lib/types";
 import Link from "next/link";
 import { getWallets, getWalletsByType, getWalletTypes } from "../actions";
+import Image from "next/image";
 import { WalletTypeForm } from "@/components/wallet-type-form";
 import { UpdateWalletTypeForm } from "@/components/wallet-type-update";
 
@@ -52,9 +53,8 @@ export default async function WalletsPage(props: {
       <div className="flex items-center justify-between gap-4 mb-6">
         <h1 className="text-2xl font-bold">Wallets</h1>
         <div className="flex items-center gap-4">
-          <WalletTypeForm />
           <Link href={`/wallets/types`} className="border rounded-md p-2">
-            Edit Wallet Type
+            View Wallet Type
           </Link>
         </div>
       </div>
@@ -63,17 +63,24 @@ export default async function WalletsPage(props: {
         <div className="mb-6 overflow-x-auto">
           <div className="flex gap-2 min-w-max">
             {walletTypes?.map((walletType: any) => (
-              <Button
+              <div
                 key={walletType._id}
-                asChild
-                variant={
-                  walletType._id === walletTypeId ? "default" : "outline"
-                }
+                className={`flex gap-2 items-center p-2 rounded-md border cursor-pointer transition-all ${
+                  walletType._id === walletTypeId
+                    ? "bg-white text-black border-primary"
+                    : "border-gray-200 hover:border-gray-300"
+                }`}
               >
+                <Image
+                  src={walletType.logo}
+                  alt="Logo"
+                  width={28}
+                  height={28}
+                />
                 <Link href={`/wallets/${walletType._id}`}>
                   {walletType.name}
                 </Link>
-              </Button>
+              </div>
             ))}
           </div>
         </div>

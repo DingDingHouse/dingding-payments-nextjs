@@ -69,10 +69,10 @@ const walletTypeColumns: ColumnDef<WalletType>[] = [
     header: "Status",
     cell: ({ getValue }) => <StatusBadge status={getValue() as string} />,
   },
-  // {
-  //   accessorFn: (row) => row.createdBy.name,
-  //   header: "Created By",
-  // },
+  {
+    accessorFn: (row) => row.createdBy.name,
+    header: "Created By",
+  },
   {
     accessorKey: "createdAt",
     header: "Created At",
