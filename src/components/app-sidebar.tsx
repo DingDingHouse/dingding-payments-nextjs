@@ -13,9 +13,10 @@ import {
 import { DropdownMenuItem, DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import Link from "next/link"
 import { ThemeToggle } from "./theme-toggle"
-import { useAppDispatch, useAppSelector } from "@/lib/hooks"
+import { useAppSelector } from "@/lib/hooks"
 import { Roles } from "@/lib/types"
-import { setUser, User } from "@/lib/features/users/UsersSlice"
+import { User } from "@/lib/features/users/UsersSlice"
+
 
 const resourceIcons: Record<string, any> = {
     home: Home,
@@ -26,16 +27,8 @@ const resourceIcons: Record<string, any> = {
     requests: FileText,
 }
 
-type Permission = {
-    resource: string
-    permission: string
-}
-
 
 export function AppSidebar({ user }: { user: User }) {
-    const dispatch = useAppDispatch()
-    dispatch(setUser(user))
-
     const currentUser = useAppSelector(state => state.users.currentUser);
 
     if (currentUser?.role.name === Roles.PLAYER) {

@@ -23,8 +23,6 @@ export async function whoIam() {
             credentials: 'include'
         })
 
-        console.log('response', response)
-
         const data = await response.json();
         if (!response.ok) {
             return { data: null, error: data.error.message || 'Failed to fetch user data' };
