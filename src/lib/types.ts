@@ -42,26 +42,7 @@ export interface Permission {
   permission: string;
 }
 
-export type User = {
-  _id: string;
-  name: string;
-  username: string;
-  balance: number;
-  role: {
-    _id: string;
-    name: string;
-  };
-  status: string;
-  createdBy: {
-    _id: string;
-    name: string;
-  };
-  totalSpent: number;
-  totalReceived: number;
-  lastLogin: string | null;
-  permissions: Permission[];
-  createdAt: string;
-};
+
 
 export type Transaction = {
   _id: string;

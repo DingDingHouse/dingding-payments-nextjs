@@ -53,7 +53,6 @@ export async function POST(request: NextRequest) {
                 credentials: 'include'
             });
 
-            console.log('Server logout response:', response.status);
 
             // Try to parse the response
             const data = await response.json().catch(() => null);
@@ -84,6 +83,9 @@ export async function POST(request: NextRequest) {
         // Clear cookies
         res.cookies.delete('accessToken');
         res.cookies.delete('refreshToken');
+        res.cookies.delete('twk_uuid_67c6df32b5d977190f13cebf');
+        res.cookies.delete('TawkConnectionTime');
+        res.cookies.delete('twk_idm_key');
 
         return res;
     }

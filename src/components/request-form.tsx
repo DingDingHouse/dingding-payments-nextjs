@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Check, ChevronsUpDown, Search } from "lucide-react";
+import { PlusCircle, Check, ChevronsUpDown, Search, X } from "lucide-react";
 import {
     Dialog,
     DialogContent,
@@ -19,8 +19,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import { useAppSelector } from "@/lib/hooks";
-import { Roles, User } from "@/lib/types";
+import { Roles } from "@/lib/types";
 import { getDescendants } from "@/lib/actions";
+import { User } from "@/lib/features/users/UsersSlice";
 
 
 interface RequestFormProps {
@@ -29,12 +30,6 @@ interface RequestFormProps {
     initialQrId?: string;
 }
 
-
-interface WalletFormProps {
-    initialWalletId?: string;
-    initialQrId?: string;
-    shouldAutoOpen?: boolean;
-}
 
 export function CreateRequestButton({
     initialWalletId,
@@ -95,7 +90,6 @@ export default function RequestForm({ onClose, initialWalletId, initialQrId }: R
 
     const [players, setPlayers] = useState<User[]>([]);
     const [selectedUserId, setSelectedUserId] = useState<string>("");
-    const [openCombobox, setOpenCombobox] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
 
     const [paymentMethod, setPaymentMethod] = useState<"bank" | "upi">("bank");
@@ -110,14 +104,24 @@ export default function RequestForm({ onClose, initialWalletId, initialQrId }: R
     useEffect(() => {
         if (!isPlayer) {
             const fetchPlayers = async () => {
-                const { data, error } = await getDescendants({ role: 'player' });
+                // Include searchQuery in the API call if it exists
+                const { data, error } = await getDescendants({
+                    role: 'player',
+                    search: searchQuery.trim() ? searchQuery : undefined
+                });
                 if (!error && data) {
                     setPlayers(data.data);
                 }
             };
-            fetchPlayers();
+
+            // Use a debounce to avoid too many API calls when typing
+            const timer = setTimeout(() => {
+                fetchPlayers();
+            }, 300);
+
+            return () => clearTimeout(timer);
         }
-    }, [isPlayer]);
+    }, [isPlayer, searchQuery]);
 
     // Simple validation function
     const validateForm = () => {
@@ -206,6 +210,11 @@ export default function RequestForm({ onClose, initialWalletId, initialQrId }: R
 
             if (!isPlayer && selectedUserId) {
                 formData.append("userId", selectedUserId);
+                // Add the selected player's username as userReference
+                const selectedPlayer = players.find(p => p._id === selectedUserId);
+                if (selectedPlayer) {
+                    formData.append("userReference", selectedPlayer._id);
+                }
             }
 
             // Add withdrawal payment information if applicable
@@ -292,51 +301,94 @@ export default function RequestForm({ onClose, initialWalletId, initialQrId }: R
                 <div className="space-y-2">
                     <Label htmlFor="userId">Select Player</Label>
                     <div className="relative">
-                        <div className="relative">
+                        <div className="flex items-center relative border rounded-md focus-within:ring-1 focus-within:ring-ring">
+                            <Search className="absolute left-3 h-4 w-4 text-muted-foreground" />
                             <Input
-                                placeholder="Search players..."
+                                placeholder="Search players by name or username..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="mb-2"
+                                className="pl-9 pr-4 border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                             />
-                            <Search className="absolute right-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                            {searchQuery && (
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => setSearchQuery("")}
+                                    className="absolute right-1 h-7 w-7 p-0"
+                                >
+                                    <X className="h-4 w-4" />
+                                </Button>
+                            )}
                         </div>
-                        <Select
-                            value={selectedUserId}
-                            onValueChange={setSelectedUserId}
-                            disabled={isLoading}
-                        >
-                            <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select a player" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {players
-                                    .filter(player =>
-                                        player.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                        player.username.toLowerCase().includes(searchQuery.toLowerCase())
-                                    )
-                                    .map((player) => (
-                                        <SelectItem
-                                            key={player._id}
-                                            value={player._id}
-                                        >
-                                            {player.name} ({player.username})
-                                        </SelectItem>
-                                    ))
-                                }
-                                {players.filter(player =>
-                                    player.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                                    player.username.toLowerCase().includes(searchQuery.toLowerCase())
-                                ).length === 0 && (
-                                        <div className="relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm text-muted-foreground">
-                                            No players found
+
+                        {/* Always show player list when searching */}
+                        {searchQuery.trim() !== "" && (
+                            <div className="absolute z-10 mt-1 w-full bg-popover shadow-md rounded-md border p-0 overflow-hidden">
+                                <div style={{ maxHeight: '200px', overflowY: 'auto' }} className="py-1">
+                                    {players.length > 0 ? (
+                                        players.map((player) => (
+                                            <div
+                                                key={player._id}
+                                                onClick={() => {
+                                                    setSelectedUserId(player._id);
+                                                    setSearchQuery(""); // Clear search after selection
+                                                }}
+                                                className={`flex items-center px-3 py-2 text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground transition-colors`}
+                                            >
+                                                <div className="flex-1">
+                                                    <div className="font-medium">{player.name}</div>
+                                                    <div className="text-xs text-muted-foreground">@{player.username}</div>
+                                                </div>
+                                                {selectedUserId === player._id && (
+                                                    <Check className="h-4 w-4 text-primary" />
+                                                )}
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="text-center py-3 text-sm text-muted-foreground">
+                                            No matching players found
                                         </div>
                                     )}
-                            </SelectContent>
-                        </Select>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Selected player display */}
+                        {selectedUserId && players.find(p => p._id === selectedUserId) && (
+                            <div className="mt-3 bg-primary/10 rounded-md p-3 flex items-center justify-between">
+                                <div className="flex items-center gap-2">
+                                    <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-medium">
+                                        {players.find(p => p._id === selectedUserId)?.name?.[0]?.toUpperCase() || '?'}
+                                    </div>
+                                    <div>
+                                        <div className="font-medium">
+                                            {players.find(p => p._id === selectedUserId)?.name}
+                                        </div>
+                                        <div className="text-xs text-muted-foreground">
+                                            @{players.find(p => p._id === selectedUserId)?.username}
+                                        </div>
+                                    </div>
+                                </div>
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => {
+                                        setSelectedUserId("");
+                                        setSearchQuery("");
+                                    }}
+                                    className="h-8 w-8 p-0 rounded-full"
+                                >
+                                    <span className="sr-only">Remove player</span>
+                                    <X className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        )}
                     </div>
                     <p className="text-sm text-muted-foreground">
-                        Select the player for whom you want to create the request.
+                        {selectedUserId
+                            ? "Selected player will receive the requested amount."
+                            : "Search for players by name or username and select from the list."
+                        }
                     </p>
                 </div>
             )}

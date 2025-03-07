@@ -17,7 +17,7 @@ export function middleware(request: NextRequest) {
         });
     }
 
-    const publicPaths = ['/login', '/register', '/api/auth/login'];
+    const publicPaths = ['/login', '/api/auth/login', '/logout', '/api/auth/logout'];
     const isPublicPath = publicPaths.includes(path);
 
     // Handle API routes
@@ -46,6 +46,11 @@ export function middleware(request: NextRequest) {
             }
         }
 
+        return NextResponse.next();
+    }
+
+    // Special case for logout - always allow it regardless of token status
+    if (path === '/logout') {
         return NextResponse.next();
     }
 

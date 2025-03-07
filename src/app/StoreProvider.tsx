@@ -9,7 +9,7 @@ export default function StoreProvider({
     initialData
 }: {
     children: React.ReactNode
-    initialData: any
+    initialData?: any
 }) {
     const storeRef = useRef<AppStore>(undefined)
     if (!storeRef.current) {

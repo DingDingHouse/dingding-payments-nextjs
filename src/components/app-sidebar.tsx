@@ -15,6 +15,8 @@ import Link from "next/link"
 import { ThemeToggle } from "./theme-toggle"
 import { useAppSelector } from "@/lib/hooks"
 import { Roles } from "@/lib/types"
+import { User } from "@/lib/features/users/UsersSlice"
+
 
 const resourceIcons: Record<string, any> = {
     home: Home,
@@ -25,21 +27,6 @@ const resourceIcons: Record<string, any> = {
     requests: FileText,
 }
 
-type Permission = {
-    resource: string
-    permission: string
-}
-
-type User = {
-    name: string,
-    username: string,
-    role: {
-        name: string,
-        descendants: string[]
-    },
-    status: string,
-    permissions: Permission[]
-}
 
 export function AppSidebar({ user }: { user: User }) {
     const currentUser = useAppSelector(state => state.users.currentUser);

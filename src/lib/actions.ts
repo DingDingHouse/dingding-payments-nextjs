@@ -343,6 +343,7 @@ export async function getDescendants(query?: UserQuery): Promise<ActionResponse<
             error: null
         };
     } catch (error) {
+        console.error('Failed to fetch descendants:', error);
         return {
             data: null,
             error: error instanceof Error ? error.message : 'Failed to fetch descendants'

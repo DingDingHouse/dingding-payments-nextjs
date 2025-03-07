@@ -43,11 +43,13 @@ declare global {
 export function TawkInit() {
     const currentUser = useAppSelector((state) => state.users.currentUser);
 
-    if (!currentUser || currentUser.role.name !== Roles.PLAYER) {
-        return null;
-    }
-
     useEffect(() => {
+
+        // Skip initialization if user doesn't meet criteria
+        if (!currentUser || currentUser.role.name !== Roles.PLAYER) {
+            return;
+        }
+
         // Ensure Tawk.to is initialized
         window.Tawk_LoadStart = new Date();
 
@@ -106,13 +108,13 @@ export function TawkInit() {
                 console.log("Ending Tawk.to chat session...");
                 window.Tawk_API.hideWidget(); // Hide chat widget
                 window.Tawk_API.endChat?.(); // End chat session if method exists
-
-                // Don't delete the API object, just clean up the session
-                // This allows the widget to reinitialize properly on remount
-                // delete window.Tawk_API;
             }
         };
     }, [currentUser]);
+
+    if (!currentUser || currentUser.role.name !== Roles.PLAYER) {
+        return null;
+    }
 
     return (
         <Script
