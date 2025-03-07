@@ -2,7 +2,6 @@ import { AppSidebar } from "@/components/app-sidebar"
 import { SidebarProvider } from "@/components/ui/sidebar"
 import { whoIam } from "@/lib/actions"
 import { redirect } from "next/navigation";
-import StoreProvider from "../StoreProvider";
 import { TawkInit } from "@/components/tawk-init";
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
@@ -10,9 +9,8 @@ export default async function Layout({ children }: { children: React.ReactNode }
     if (error) {
         redirect('/logout')
     }
-    console.log("WHO IAM  : ", data)
     return (
-        <StoreProvider initialData={data}>
+        <>
             <SidebarProvider>
                 <AppSidebar user={data} />
                 <main className="w-full">
@@ -20,7 +18,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
                 </main>
             </SidebarProvider>
             <TawkInit />
-        </StoreProvider>
+        </>
 
     )
 }

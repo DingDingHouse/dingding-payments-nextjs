@@ -6,7 +6,6 @@ import { ActionResponse, QRCodeResponse } from "@/lib/types";
 import { Coins, FileText, LogOut, Sparkles, Star } from "lucide-react";
 import Link from "next/link";
 import { getQRCodes, getWallets } from "./wallets/actions";
-import { LogoutButton } from "@/components/logout-button";
 import DepositCard from "@/components/deposit-card";
 
 export const dynamic = 'force-dynamic';
@@ -105,7 +104,7 @@ export default async function PlayerHomePage(props: {
 
                     <DepositInstructions />
 
-                    {/* <Link href="/logout" className="block w-full">
+                    <Link href="/logout" className="block w-full">
                         <div className="bg-[rgba(0,0,0,0.4)] backdrop-blur-md border border-red-500/30 rounded-xl p-4 shadow-lg hover:border-red-500/60 transform transition hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]">
                             <div className="flex items-center gap-3">
                                 <div className="p-2.5 bg-gradient-to-br from-red-500 to-red-700 rounded-full shadow-lg">
@@ -117,8 +116,7 @@ export default async function PlayerHomePage(props: {
                                 </div>
                             </div>
                         </div>
-                    </Link> */}
-                    <LogoutButton />
+                    </Link>
                 </div>
 
                 {/* Right content area with payment methods */}
