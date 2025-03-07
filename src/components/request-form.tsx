@@ -61,7 +61,7 @@ export function CreateRequestButton({
                     Add Request
                 </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px] md:max-w-[600px]">
+            <DialogContent className="sm:max-w-[550px] md:max-w-[650px] max-h-[85vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle>Create New Request</DialogTitle>
                     <DialogDescription>
@@ -97,6 +97,14 @@ export default function RequestForm({ onClose, initialWalletId, initialQrId }: R
     const [selectedUserId, setSelectedUserId] = useState<string>("");
     const [openCombobox, setOpenCombobox] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
+
+    const [paymentMethod, setPaymentMethod] = useState<"bank" | "upi">("bank");
+    const [bankName, setBankName] = useState("");
+    const [accountNumber, setAccountNumber] = useState("");
+    const [accountName, setAccountName] = useState("");
+    const [branchCode, setBranchCode] = useState("");
+    const [ifscCode, setIfscCode] = useState("");
+    const [upiId, setUpiId] = useState("");
 
 
     useEffect(() => {
@@ -140,6 +148,27 @@ export default function RequestForm({ onClose, initialWalletId, initialQrId }: R
             return false;
         }
 
+        // Validate withdrawal payment information
+        if (type === "withdrawal") {
+            if (paymentMethod === "bank") {
+                if (!bankName || !accountNumber || !accountName || !ifscCode) {
+                    toast({
+                        title: "Validation Error",
+                        description: "Please fill in all required bank details",
+                        variant: "destructive",
+                    });
+                    return false;
+                }
+            } else if (paymentMethod === "upi" && !upiId) {
+                toast({
+                    title: "Validation Error",
+                    description: "Please enter a valid UPI ID",
+                    variant: "destructive",
+                });
+                return false;
+            }
+        }
+
         return true;
     };
 
@@ -177,6 +206,21 @@ export default function RequestForm({ onClose, initialWalletId, initialQrId }: R
 
             if (!isPlayer && selectedUserId) {
                 formData.append("userId", selectedUserId);
+            }
+
+            // Add withdrawal payment information if applicable
+            if (type === "withdrawal") {
+                formData.append("paymentMethod", paymentMethod);
+
+                if (paymentMethod === "bank") {
+                    if (bankName) formData.append("bankName", bankName);
+                    if (accountNumber) formData.append("accountNumber", accountNumber);
+                    if (accountName) formData.append("accountName", accountName);
+                    if (branchCode) formData.append("branchCode", branchCode);
+                    if (ifscCode) formData.append("ifscCode", ifscCode);
+                } else if (paymentMethod === "upi") {
+                    if (upiId) formData.append("upiId", upiId);
+                }
             }
 
             const response = await createRequest(formData);
@@ -312,34 +356,155 @@ export default function RequestForm({ onClose, initialWalletId, initialQrId }: R
                 />
             </div>
 
-            {type === "deposit" && (
+            {type === "withdrawal" && (
                 <>
                     <div className="space-y-2">
-                        <Label htmlFor="transactionId">Transaction ID (Optional)</Label>
-                        <Input
-                            id="transactionId"
-                            value={transactionId}
-                            onChange={(e) => setTransactionId(e.target.value)}
-                            placeholder="Enter transaction ID"
-                            disabled={isLoading}
-                        />
-                        <p className="text-sm text-muted-foreground">
-                            If available, enter the transaction ID from your payment.
-                        </p>
+                        <Label>Payment Method</Label>
+                        <div className="flex gap-4">
+                            <div className="flex items-center space-x-2">
+                                <input
+                                    type="radio"
+                                    id="bank"
+                                    name="paymentMethod"
+                                    checked={paymentMethod === "bank"}
+                                    onChange={() => setPaymentMethod("bank")}
+                                    className="h-4 w-4 rounded-full"
+                                />
+                                <Label htmlFor="bank" className="cursor-pointer">Bank Transfer</Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                                <input
+                                    type="radio"
+                                    id="upi"
+                                    name="paymentMethod"
+                                    checked={paymentMethod === "upi"}
+                                    onChange={() => setPaymentMethod("upi")}
+                                    className="h-4 w-4 rounded-full"
+                                />
+                                <Label htmlFor="upi" className="cursor-pointer">UPI</Label>
+                            </div>
+                        </div>
                     </div>
 
-                    <div className="space-y-2">
-                        <Label htmlFor="qrReference">QR Reference (Optional)</Label>
-                        <Input
-                            id="qrReference"
-                            value={qrReference}
-                            onChange={(e) => setQrReference(e.target.value)}
-                            placeholder="Enter QR reference"
-                            disabled={isLoading}
-                        />
-                        <p className="text-sm text-muted-foreground">
-                            If you paid using a QR code, enter the reference number.
-                        </p>
+                    {paymentMethod === "bank" ? (
+                        <div className="space-y-4 border rounded-md p-4 bg-muted/30">
+                            <h3 className="font-medium">Bank Details</h3>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label htmlFor="bankName">Bank Name <span className="text-red-500">*</span></Label>
+                                    <Input
+                                        id="bankName"
+                                        value={bankName}
+                                        onChange={(e) => setBankName(e.target.value)}
+                                        placeholder="Enter bank name"
+                                        disabled={isLoading}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="accountName">Account Holder Name <span className="text-red-500">*</span></Label>
+                                    <Input
+                                        id="accountName"
+                                        value={accountName}
+                                        onChange={(e) => setAccountName(e.target.value)}
+                                        placeholder="Enter account holder name"
+                                        disabled={isLoading}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="accountNumber">Account Number <span className="text-red-500">*</span></Label>
+                                    <Input
+                                        id="accountNumber"
+                                        value={accountNumber}
+                                        onChange={(e) => setAccountNumber(e.target.value)}
+                                        placeholder="Enter account number"
+                                        disabled={isLoading}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="ifscCode">IFSC Code <span className="text-red-500">*</span></Label>
+                                    <Input
+                                        id="ifscCode"
+                                        value={ifscCode}
+                                        onChange={(e) => setIfscCode(e.target.value)}
+                                        placeholder="Enter IFSC code"
+                                        disabled={isLoading}
+                                        required
+                                    />
+                                </div>
+
+                                <div className="space-y-2 sm:col-span-2">
+                                    <Label htmlFor="branchCode">Branch Code (Optional)</Label>
+                                    <Input
+                                        id="branchCode"
+                                        value={branchCode}
+                                        onChange={(e) => setBranchCode(e.target.value)}
+                                        placeholder="Enter branch code"
+                                        disabled={isLoading}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        // UPI section remains the same
+                        <div className="space-y-4 border rounded-md p-4 bg-muted/30">
+                            <h3 className="font-medium">UPI Details</h3>
+                            <div className="space-y-2">
+                                <Label htmlFor="upiId">UPI ID <span className="text-red-500">*</span></Label>
+                                <Input
+                                    id="upiId"
+                                    value={upiId}
+                                    onChange={(e) => setUpiId(e.target.value)}
+                                    placeholder="Enter UPI ID (e.g., name@upi)"
+                                    disabled={isLoading}
+                                    required
+                                />
+                                <p className="text-sm text-muted-foreground">
+                                    Enter your UPI ID such as name@ybl, phone@okicici, etc.
+                                </p>
+                            </div>
+                        </div>
+                    )}
+                </>
+            )}
+
+
+
+            {type === "deposit" && (
+                <>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="transactionId">Transaction ID (Optional)</Label>
+                            <Input
+                                id="transactionId"
+                                value={transactionId}
+                                onChange={(e) => setTransactionId(e.target.value)}
+                                placeholder="Enter transaction ID"
+                                disabled={isLoading}
+                            />
+                            <p className="text-sm text-muted-foreground">
+                                If available, enter the transaction ID from your payment.
+                            </p>
+                        </div>
+
+                        <div className="space-y-2">
+                            <Label htmlFor="qrReference">QR Reference (Optional)</Label>
+                            <Input
+                                id="qrReference"
+                                value={qrReference}
+                                onChange={(e) => setQrReference(e.target.value)}
+                                placeholder="Enter QR reference"
+                                disabled={isLoading}
+                            />
+                            <p className="text-sm text-muted-foreground">
+                                If you paid using a QR code, enter the reference number.
+                            </p>
+                        </div>
                     </div>
 
                     <div className="space-y-2">
@@ -354,7 +519,6 @@ export default function RequestForm({ onClose, initialWalletId, initialQrId }: R
                         <p className="text-sm text-muted-foreground">
                             Upload a screenshot of your payment confirmation.
                         </p>
-
 
                         {file && (
                             <div className="mt-2 bg-secondary/40 rounded-md p-2">

@@ -2,23 +2,8 @@
 
 import { Sparkles } from 'lucide-react';
 import React, { useEffect, useState } from 'react'
+import { Badge } from './ui/badge';
 
-declare global {
-    interface Window {
-        Tawk_API?: {
-            maximize: () => void;
-            minimize: () => void;
-            toggle: () => void;
-            popup: () => void;
-            showWidget: () => void;
-            hideWidget: () => void;
-            isChatMaximized: () => boolean;
-            onChatMaximized: (callback: () => void) => void;
-            onChatMinimized: (callback: () => void) => void;
-            getStatus: () => string;
-        };
-    }
-}
 
 const SupportButton = () => {
     const [isChatOpen, setIsChatOpen] = useState(false);
@@ -85,6 +70,29 @@ const SupportButton = () => {
                 </div>
             </div>
         </div>
+    )
+}
+
+export const SupportBadge = () => {
+    const toggleTawkChat = () => {
+        if (typeof window !== "undefined" && window.Tawk_API) {
+            try {
+                window.Tawk_API.toggle();
+                return true;
+            } catch (error) {
+                console.error("Error toggling Tawk chat:", error);
+            }
+        }
+        return false;
+    }
+
+    return (
+        <Badge
+            onClick={toggleTawkChat}
+            className="bg-[#2C73D2]/30 text-[#8EACCD] hover:bg-[#2C73D2]/50 cursor-pointer"
+        >
+            Need Help?
+        </Badge>
     )
 }
 

@@ -16,6 +16,7 @@ export default function LoginPage() {
     const router = useRouter();
     const { toast } = useToast();
 
+
     async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
         setIsLoading(true);

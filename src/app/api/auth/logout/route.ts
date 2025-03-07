@@ -53,8 +53,11 @@ export async function POST(request: NextRequest) {
                 credentials: 'include'
             });
 
+            console.log('Server logout response:', response.status);
+
             // Try to parse the response
             const data = await response.json().catch(() => null);
+
 
             // Log server response for debugging but don't change our success response
             if (!response.ok) {

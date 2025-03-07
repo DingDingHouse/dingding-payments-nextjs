@@ -10,7 +10,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
     if (error) {
         redirect('/logout')
     }
-    console.log(data)
+    console.log("WHO IAM  : ", data)
     return (
         <StoreProvider initialData={data}>
             <SidebarProvider>
