@@ -12,8 +12,8 @@ import {
 import { useState } from "react"
 import { updateUser } from "@/lib/actions"
 import { useToast } from "@/hooks/use-toast"
-import { User } from "@/lib/types"
 import { Eye, EyeOff } from "lucide-react"
+import { User } from "@/lib/features/users/UsersSlice"
 
 interface UpdateUserFormProps {
     user: User

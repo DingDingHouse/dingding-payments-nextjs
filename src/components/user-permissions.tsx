@@ -4,10 +4,11 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { updateUserPermissions } from "@/lib/actions";
-import { Permission, User } from "@/lib/types";
+import { Permission } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "./ui/input";
 import { ScrollArea } from "./ui/scroll-area";
+import { User } from "@/lib/features/users/UsersSlice";
 
 const RESOURCES = ['users', 'roles', 'wallets', 'requests'];
 const PERMISSIONS = ['r', 'w', 'x'];

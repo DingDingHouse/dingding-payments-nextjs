@@ -23,6 +23,7 @@ export interface User {
     role: Role;
     status: string;
     permissions: Permission[];
+    createdBy: User;
 }
 
 interface UserState {

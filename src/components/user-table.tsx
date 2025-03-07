@@ -1,7 +1,6 @@
 "use client";
 import { DataTable } from "./data-table";
 import { ColumnDef } from "@tanstack/react-table";
-import { User } from "@/lib/types";
 import StatusBadge from "./status-badge";
 import {
   ArrowDown,
@@ -45,6 +44,7 @@ import { UserPermissions } from "./user-permissions";
 import Link from "next/link";
 import { UserSearch } from "./user-search";
 import { DateRangePicker } from "./date-range-picker";
+import { User } from "@/lib/features/users/UsersSlice";
 
 const userColumns: ColumnDef<User>[] = [
   {

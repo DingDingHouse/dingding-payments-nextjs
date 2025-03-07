@@ -1,9 +1,9 @@
 "use client"
 
-import { User } from "@/lib/types"
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import StatusBadge from "./status-badge"
 import { formatDate } from "@/lib/utils"
+import { User } from "@/lib/features/users/UsersSlice"
 
 export function UserDetailsCard({ user }: { user: User }) {
     return (
@@ -21,16 +21,16 @@ export function UserDetailsCard({ user }: { user: User }) {
                     <div className="text-sm text-muted-foreground">{user.role.name}</div>
                 </div>
 
-                <div className="space-y-1">
+                {/* <div className="space-y-1">
                     <div className="text-sm font-medium">Created By</div>
                     <div className="text-sm text-muted-foreground">{user.createdBy.name}</div>
-                </div>
-                <div className="space-y-1">
+                </div> */}
+                {/* <div className="space-y-1">
                     <div className="text-sm font-medium">Created At</div>
                     <div className="text-sm text-muted-foreground">
                         {formatDate(user.createdAt)}
                     </div>
-                </div>
+                </div> */}
             </CardContent>
         </Card>
     )
