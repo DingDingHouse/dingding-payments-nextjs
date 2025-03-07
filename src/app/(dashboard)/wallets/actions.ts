@@ -78,7 +78,6 @@ export async function createWallet(
   walletTypeId: string
 ): Promise<ActionResponse<any>> {
   try {
-    console.log(data);
     const accessToken = await getCookie("accessToken");
     if (!accessToken) {
       return { data: null, error: "No access token found" };
@@ -300,6 +299,44 @@ export async function updateWallet(
   }
 }
 
+export async function updateWalletType(
+  id: string,
+  data: FormData
+): Promise<ActionResponse<any>> {
+  try {
+    const accessToken = await getCookie("accessToken");
+    if (!accessToken) {
+      return { data: null, error: "No access token found" };
+    }
+
+    const response = await fetch(`${config.server}/api/wallets/types/${id}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: data,
+      credentials: "include",
+    });
+
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      return {
+        data: null,
+        error: responseData.error?.message || "Failed to update wallet type",
+      };
+    }
+
+    return { data: responseData.data, error: null };
+  } catch (error) {
+    return {
+      data: null,
+      error:
+        error instanceof Error ? error.message : "Failed to update wallet type",
+    };
+  }
+}
+
 export async function deleteWallet(id: string): Promise<ActionResponse<any>> {
   try {
     const accessToken = await getCookie("accessToken");
@@ -330,6 +367,43 @@ export async function deleteWallet(id: string): Promise<ActionResponse<any>> {
     return {
       data: null,
       error: error instanceof Error ? error.message : "Failed to delete wallet",
+    };
+  }
+}
+
+export async function deleteWalletType(
+  id: string
+): Promise<ActionResponse<any>> {
+  try {
+    const accessToken = await getCookie("accessToken");
+    if (!accessToken) {
+      return { data: null, error: "No access token found" };
+    }
+
+    const response = await fetch(`${config.server}/api/wallets/types/${id}`, {
+      method: "DELETE",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+
+    const responseData = await response.json();
+
+    if (!response.ok) {
+      return {
+        data: null,
+        error: responseData.error?.message || "Failed to delete wallet type",
+      };
+    }
+
+    return { data: responseData.data, error: null };
+  } catch (error) {
+    return {
+      data: null,
+      error:
+        error instanceof Error ? error.message : "Failed to delete wallet type",
     };
   }
 }

@@ -36,7 +36,6 @@ export default async function WalletPage(props: {
   };
 
   const { data, error } = await getAWallet(params.walletId, filters);
-  console.log("getAWallet data", data);
 
   if (error) {
     return <div className="p-4">Error: {error}</div>;
@@ -47,6 +46,7 @@ export default async function WalletPage(props: {
   }
 
   const wallet = data.data;
+  console.log(wallet);
 
   return (
     <div className="w-full mx-auto p-4 space-y-6">
@@ -86,7 +86,7 @@ export default async function WalletPage(props: {
           </CardContent>
         </Card>
 
-        <QRCodesTable data={wallet.qrcodes} walletId={wallet._id} />
+        <QRCodesTable data={wallet.qrCodes} walletId={wallet._id} />
         {data?.meta && (
           <Pagination
             totalItems={data.meta.total}

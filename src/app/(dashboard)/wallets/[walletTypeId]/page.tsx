@@ -6,6 +6,7 @@ import { UserQuery } from "@/lib/types";
 import Link from "next/link";
 import { getWallets, getWalletsByType, getWalletTypes } from "../actions";
 import { WalletTypeForm } from "@/components/wallet-type-form";
+import { UpdateWalletTypeForm } from "@/components/wallet-type-update";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -50,8 +51,12 @@ export default async function WalletsPage(props: {
     <div className="p-4 sm:p-10 thin-scrollbar">
       <div className="flex items-center justify-between gap-4 mb-6">
         <h1 className="text-2xl font-bold">Wallets</h1>
-        <WalletTypeForm />
-        {/* <WalletForm /> */}
+        <div className="flex items-center gap-4">
+          <WalletTypeForm />
+          <Link href={`/wallets/types`} className="border rounded-md p-2">
+            Edit Wallet Type
+          </Link>
+        </div>
       </div>
 
       <div className="flex items-center justify-between gap-4 mb-6">
