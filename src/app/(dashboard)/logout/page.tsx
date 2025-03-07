@@ -14,6 +14,11 @@ export default function LogoutPage() {
     useEffect(() => {
         async function logout() {
             try {
+
+                // End the Tawk.to chat session if available
+                if (window.Tawk_API && window.Tawk_API.endChat) {
+                    window.Tawk_API.endChat();
+                }
                 dispatch(clearUser());
 
                 const response = await fetch('/api/auth/logout', {

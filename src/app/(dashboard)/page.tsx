@@ -1,13 +1,12 @@
 import { DepositInstructions } from "@/components/deposite-instruction";
-import { GlowingBackground } from "@/components/glow-background";
-import SupportButton from "@/components/support-button";
+import SupportButton, { SupportBadge } from "@/components/support-button";
 import { Badge } from "@/components/ui/badge";
 import { WalletTabs } from "@/components/wallets-tabs";
 import { ActionResponse, QRCodeResponse } from "@/lib/types";
 import { Coins, FileText, LogOut, Sparkles, Star } from "lucide-react";
-import Image from 'next/image';
 import Link from "next/link";
 import { getQRCodes, getWallets } from "./wallets/actions";
+import { LogoutButton } from "@/components/logout-button";
 
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
@@ -73,19 +72,7 @@ export default async function PlayerHomePage(props: {
                         <SupportButton />
                     </div>
 
-                    <Link href="/logout" className="block w-full">
-                        <div className="bg-[rgba(0,0,0,0.4)] backdrop-blur-md border border-red-500/30 rounded-xl p-4 shadow-lg hover:border-red-500/60 transform transition hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]">
-                            <div className="flex items-center gap-3">
-                                <div className="p-2.5 bg-gradient-to-br from-red-500 to-red-700 rounded-full shadow-lg">
-                                    <LogOut className="h-5 w-5 text-white" />
-                                </div>
-                                <div>
-                                    <p className="font-semibold text-white">Logout</p>
-                                    <p className="text-[#8EACCD] text-xs">End session</p>
-                                </div>
-                            </div>
-                        </div>
-                    </Link>
+
 
                     {/* Deposit info card */}
                     <div className="bg-[rgba(0,0,0,0.4)] backdrop-blur-md border border-[#2C73D2]/30 rounded-2xl p-5 shadow-lg">
@@ -118,6 +105,8 @@ export default async function PlayerHomePage(props: {
                         </div>
                     </div>
 
+
+
                     {/* Current promotion */}
                     {/* <div className="bg-gradient-to-r from-[#2C73D2] to-[#0A1149] rounded-2xl overflow-hidden shadow-lg relative">
                         <div className="absolute top-0 left-0 w-full h-full bg-[url('/confetti.png')] opacity-10 bg-repeat"></div>
@@ -142,6 +131,21 @@ export default async function PlayerHomePage(props: {
                     </div> */}
 
                     <DepositInstructions />
+
+                    {/* <Link href="/logout" className="block w-full">
+                        <div className="bg-[rgba(0,0,0,0.4)] backdrop-blur-md border border-red-500/30 rounded-xl p-4 shadow-lg hover:border-red-500/60 transform transition hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(239,68,68,0.3)]">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2.5 bg-gradient-to-br from-red-500 to-red-700 rounded-full shadow-lg">
+                                    <LogOut className="h-5 w-5 text-white" />
+                                </div>
+                                <div>
+                                    <p className="font-semibold text-white">Logout</p>
+                                    <p className="text-[#8EACCD] text-xs">End session</p>
+                                </div>
+                            </div>
+                        </div>
+                    </Link> */}
+                    <LogoutButton />
                 </div>
 
                 {/* Right content area with payment methods */}
@@ -152,9 +156,7 @@ export default async function PlayerHomePage(props: {
                             <p className="text-[#8EACCD] text-sm">Choose your preferred deposit option</p>
                         </div>
                         <div className="hidden sm:block">
-                            <Badge className="bg-[#2C73D2]/30 text-[#8EACCD] hover:bg-[#2C73D2]/50 cursor-pointer">
-                                Need Help?
-                            </Badge>
+                            <SupportBadge />
                         </div>
                     </div>
 
