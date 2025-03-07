@@ -37,7 +37,6 @@ export function WalletForm() {
     name: "",
     status: "active",
     logo: null as File | null,
-    referenceUserId: "",
   });
 
   const { toast } = useToast();
@@ -75,10 +74,6 @@ export function WalletForm() {
       form.append("logo", formData.logo);
       form.append("type", params.walletTypeId);
 
-      if (isRoot && formData.referenceUserId) {
-        form.append("referenceUserId", formData.referenceUserId);
-      }
-
       const { data, error } = await createWallet(form, params.walletTypeId);
       if (error) {
         toast({
@@ -98,7 +93,6 @@ export function WalletForm() {
           name: "",
           status: "active",
           logo: null,
-          referenceUserId: "",
         });
         setOpen(false);
         router.refresh();
@@ -132,29 +126,6 @@ export function WalletForm() {
             }
             required
           />
-
-          {isRoot && (
-            <Select
-              value={formData.referenceUserId}
-              onValueChange={(value) =>
-                setFormData((prev) => ({
-                  ...prev,
-                  referenceUserId: value,
-                }))
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select Reference User" />
-              </SelectTrigger>
-              <SelectContent>
-                {descendants.map((descendant) => (
-                  <SelectItem key={descendant._id} value={descendant._id}>
-                    {descendant.name} ({descendant.username})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          )}
           <Select
             value={formData.status}
             onValueChange={(value) =>

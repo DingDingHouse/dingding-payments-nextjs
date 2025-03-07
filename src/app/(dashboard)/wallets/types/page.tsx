@@ -2,6 +2,7 @@ import WalletTypeTable from "@/components/wallet-type-table";
 import { getWalletTypes } from "../actions";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
+import { WalletTypeForm } from "@/components/wallet-type-form";
 
 export default async function WalletsTypeUPdatePage() {
   const { data, error } = await getWalletTypes();
@@ -23,6 +24,7 @@ export default async function WalletsTypeUPdatePage() {
         </Link>
         <div className="flex items-center justify-between gap-4 mb-6">
           <h1 className="text-2xl font-bold">Wallet Types</h1>
+          <WalletTypeForm />
         </div>
       </div>
 

@@ -2,11 +2,13 @@ import { Pagination } from "@/components/pagination";
 import { Button } from "@/components/ui/button";
 import { WalletForm } from "@/components/wallet-form";
 import WalletsTable from "@/components/wallets-table";
-import { UserQuery } from "@/lib/types";
+import { Roles, UserQuery, WalletType } from "@/lib/types";
 import Link from "next/link";
-import { getWallets, getWalletsByType, getWalletTypes } from "../actions";
-import { WalletTypeForm } from "@/components/wallet-type-form";
-import { UpdateWalletTypeForm } from "@/components/wallet-type-update";
+import { getWalletsByType, getWalletTypes } from "../actions";
+import Image from "next/image";
+import { whoIam } from "@/lib/actions";
+import { root } from "postcss";
+import { SelectWalletCreator } from "@/components/select-wallet-creator";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -24,6 +26,14 @@ export default async function WalletsPage(props: {
   }>;
   params: Promise<{ walletTypeId: string }>;
 }) {
+  const { data: user, error: userError } = await whoIam();
+
+  if (userError) {
+    return <div>Error: {userError}</div>;
+  }
+
+  const isRoot = user?.role.name === Roles.ROOT;
+
   const searchParams = await props.searchParams;
 
   const filters: UserQuery = {
@@ -37,7 +47,9 @@ export default async function WalletsPage(props: {
   };
 
   const { data: walletTypes, error: walletTypesError } = await getWalletTypes();
+
   const { walletTypeId } = await props.params;
+
   const { data, error } = await getWalletsByType(walletTypeId, filters);
 
   if (walletTypesError) {
@@ -47,14 +59,44 @@ export default async function WalletsPage(props: {
     return <div>Error: {error}</div>;
   }
 
+  if (isRoot) {
+    return (
+      <div className="p-4 sm:p-10 thin-scrollbar">
+        <div className="flex items-center justify-between gap-4 mb-6">
+          <h1 className="text-2xl font-bold">Wallets</h1>
+          <div className="flex items-center gap-4">
+            <Link href={`/wallets/types`} className="border rounded-md p-2">
+              View Wallet Type
+            </Link>
+          </div>
+        </div>
+        <SelectWalletCreator
+          walletTypes={walletTypes}
+          walletTypeId={walletTypeId}
+        />
+        <WalletsTable data={data?.data} />
+        {data?.meta && (
+          <Pagination
+            totalItems={data.meta.total}
+            currentPage={data.meta.page}
+            pageSize={data.meta.limit}
+            className="justify-end flex-wrap mt-4"
+          />
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="p-4 sm:p-10 thin-scrollbar">
       <div className="flex items-center justify-between gap-4 mb-6">
         <h1 className="text-2xl font-bold">Wallets</h1>
         <div className="flex items-center gap-4">
-          <WalletTypeForm />
-          <Link href={`/wallets/types`} className="border rounded-md p-2">
-            Edit Wallet Type
+          <Link
+            href={`/wallets/types`}
+            className="rounded-md p-2 border hover:border-gray-300"
+          >
+            View Wallet Type
           </Link>
         </div>
       </div>
@@ -62,18 +104,25 @@ export default async function WalletsPage(props: {
       <div className="flex items-center justify-between gap-4 mb-6">
         <div className="mb-6 overflow-x-auto">
           <div className="flex gap-2 min-w-max">
-            {walletTypes?.map((walletType: any) => (
-              <Button
+            {walletTypes?.map((walletType: WalletType) => (
+              <div
                 key={walletType._id}
-                asChild
-                variant={
-                  walletType._id === walletTypeId ? "default" : "outline"
-                }
+                className={`flex gap-2 items-center p-2 rounded-md border cursor-pointer transition-all ${
+                  walletType._id === walletTypeId
+                    ? "bg-white text-black border-primary"
+                    : "border-gray-200 hover:border-gray-300"
+                }`}
               >
+                <Image
+                  src={walletType.logo}
+                  alt="Logo"
+                  width={28}
+                  height={28}
+                />
                 <Link href={`/wallets/${walletType._id}`}>
                   {walletType.name}
                 </Link>
-              </Button>
+              </div>
             ))}
           </div>
         </div>

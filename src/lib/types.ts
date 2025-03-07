@@ -100,7 +100,11 @@ export type WalletType = {
   _id: string;
   name: string;
   logo: string;
-  status: string;
+  status: "active" | "inactive";
+  createdBy: {
+    name: string;
+    username: string;
+  };
   createdAt: string;
   updatedAt: string;
 };

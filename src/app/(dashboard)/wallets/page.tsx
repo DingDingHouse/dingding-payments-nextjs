@@ -13,6 +13,7 @@ export const fetchCache = "force-no-store";
 
 export default async function WalletsPage() {
   const { data: walletTypes, error: walletTypesError } = await getWalletTypes();
+  console.log("walletTypes", walletTypes);
 
   // if wallet type is not empty then redirect to the first wallet type
   if (walletTypes?.length > 0) {
