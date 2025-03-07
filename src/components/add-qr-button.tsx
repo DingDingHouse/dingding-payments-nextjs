@@ -22,6 +22,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { on } from "events";
 
 interface AddQRButtonProps {
   walletId: string;
@@ -32,24 +33,50 @@ export function AddQRButton({ walletId }: AddQRButtonProps) {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { toast } = useToast();
+  const [formData, setFormData] = useState({
+    title: "",
+    status: "active",
+    qrcode: null as File | null,
+  });
 
-  async function onSubmit(formData: FormData) {
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    console.log("button clicked");
     setLoading(true);
 
     try {
-      const result = await addQR(walletId, formData);
+      if (!formData.qrcode) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "qrcode is required",
+        });
+        return;
+      }
+
+      const form = new FormData();
+      form.append("title", formData.title);
+      form.append("status", formData.status);
+      form.append("qrcode", formData.qrcode);
+      const result = await addQR(walletId, form);
 
       if (result.error) {
         throw new Error(result.error);
       }
 
-      toast({
-        title: "Success",
-        description: "QR code created successfully",
-      });
-
-      setOpen(false);
-      router.refresh();
+      if (result.data) {
+        toast({
+          title: "Success",
+          description: `QR code created successfully`,
+        });
+        setFormData({
+          title: "",
+          status: "active",
+          qrcode: null,
+        });
+        setOpen(false);
+        router.refresh();
+      }
     } catch (error) {
       toast({
         variant: "destructive",
@@ -74,20 +101,19 @@ export function AddQRButton({ walletId }: AddQRButtonProps) {
         <DialogHeader>
           <DialogTitle>Add New QR Code</DialogTitle>
         </DialogHeader>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            const formData = new FormData(e.currentTarget);
-            onSubmit(formData);
-          }}
-          className="space-y-4"
-        >
+        <form onSubmit={onSubmit} className="space-y-4">
           <div>
             <Label htmlFor="title">Title</Label>
-            <Input id="title" name="title" required />
+            <Input
+              placeholder="Title"
+              value={formData.title}
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
+              required
+            />
           </div>
-          {/* select field for status active or inactive */}
-          {/* <Select
+          <Select
             value={formData.status}
             onValueChange={(value) =>
               setFormData((prev) => ({ ...prev, status: value }))
@@ -103,24 +129,16 @@ export function AddQRButton({ walletId }: AddQRButtonProps) {
             </SelectContent>
           </Select>
           <div>
-            <Label htmlFor="status">Status</Label>
-            <select
-              id="status"
-              name="status"
-              className="block w-full mt-1 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm border-gray-300"
-              required
-            >
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
-            </select>
-          </div> */}
-          <div>
             <Label htmlFor="qrcode">QR Code Image</Label>
             <Input
-              id="qrcode"
-              name="qrcode"
               type="file"
               accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  setFormData((prev) => ({ ...prev, qrcode: file }));
+                }
+              }}
               required
             />
           </div>
