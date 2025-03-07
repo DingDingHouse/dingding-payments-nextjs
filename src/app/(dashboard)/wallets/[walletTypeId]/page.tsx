@@ -53,7 +53,7 @@ export default async function WalletsPage(props: {
         <h1 className="text-2xl font-bold">Wallets</h1>
         <div className="flex items-center gap-4">
           <WalletTypeForm />
-          <Link href={`/wallets/edit`} className="border rounded-md p-2">
+          <Link href={`/wallets/types`} className="border rounded-md p-2">
             Edit Wallet Type
           </Link>
         </div>
