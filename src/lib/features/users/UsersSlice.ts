@@ -19,6 +19,7 @@ export interface User {
     _id: string;
     name: string;
     username: string;
+    credits: number;
     role: Role;
     status: string;
     permissions: Permission[];

@@ -127,7 +127,12 @@ export async function getRequestById(id: string): Promise<ActionResponse<any>> {
     }
 }
 
-export async function approveRequest(id: string, notes?: string): Promise<ActionResponse<any>> {
+// This would be in your actions.ts file
+export async function approveRequest(
+    id: string,
+    notes?: string,
+    approvedAmount?: number
+): Promise<ActionResponse<any>> {
     try {
         const accessToken = await getCookie('accessToken');
 
@@ -137,7 +142,7 @@ export async function approveRequest(id: string, notes?: string): Promise<Action
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`
             },
-            body: JSON.stringify({ notes }),
+            body: JSON.stringify({ notes, approvedAmount }),
             credentials: 'include'
         });
 

@@ -5,13 +5,14 @@ export type RequestType = 'recharge' | 'redeem';
 
 export interface Request {
     _id: string;
+    amount: number;
+    approvedAmount?: number | null;
     userId: {
         _id: string;
         name: string;
         username: string;
     };
     type: string;
-    amount: number;
     status: RequestStatus;
     transactionId?: string;
     qrReference?: string;

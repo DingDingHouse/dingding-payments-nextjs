@@ -28,7 +28,7 @@ import {
     DialogHeader,
     DialogTitle,
 } from "./ui/dialog"
-import { Request, RequestStatus } from "@/app/(dashboard)/requests/type"
+import { Request, RequestStatus, RequestType } from "@/app/(dashboard)/requests/type"
 import { approveRequest, rejectRequest } from "@/app/(dashboard)/requests/actions"
 import { toast } from "@/hooks/use-toast"
 import { useAppSelector } from "@/lib/hooks"
@@ -110,6 +110,15 @@ const getRequestColumns = (
             }
         },
         {
+            accessorKey: 'approvedAmount',
+            header: 'Approved Amount',
+            cell: ({ row }) => (
+                <div className="flex items-center text-center">
+                    {formatCurrency(row.getValue('approvedAmount'))}
+                </div>
+            )
+        },
+        {
             accessorKey: 'approverId',
             header: 'Processed By',
             cell: ({ getValue }) => {
@@ -150,6 +159,8 @@ const getRequestColumns = (
     ];
 
 export default function RequestsTable({ data }: { data: Request[] }) {
+
+    console.log("REQYESR DATA", data)
     const router = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();
@@ -165,6 +176,9 @@ export default function RequestsTable({ data }: { data: Request[] }) {
     const [isApproveDialogOpen, setIsApproveDialogOpen] = useState(false);
     const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
     const [requestToProcess, setRequestToProcess] = useState<Request | null>(null);
+    const [approvedAmount, setApprovedAmount] = useState<string>("");
+    const [approvalNotes, setApprovalNotes] = useState<string>("");
+
 
     const currentUser = useAppSelector(state => state.users.currentUser);
 
@@ -175,6 +189,8 @@ export default function RequestsTable({ data }: { data: Request[] }) {
 
     const handleApproveClick = (request: Request) => {
         setRequestToProcess(request);
+        // Pre-fill the amount field with the requested amount
+        setApprovedAmount(request.amount.toString());
         setIsApproveDialogOpen(true);
     };
 
@@ -186,19 +202,45 @@ export default function RequestsTable({ data }: { data: Request[] }) {
     const handleApprove = async () => {
         if (!requestToProcess) return;
 
-        setProcessingRequest(requestToProcess._id);
-        const { error } = await approveRequest(requestToProcess._id);
 
+        // Validate that amount is entered
+        if (!approvedAmount.trim()) {
+            toast({
+                title: "Error",
+                description: "Please enter the approved amount",
+                variant: "destructive",
+            });
+            return;
+        }
+
+        // Validate that amount is a valid number
+        const amount = parseFloat(approvedAmount);
+        if (isNaN(amount) || amount <= 0) {
+            toast({
+                title: "Error",
+                description: "Please enter a valid amount greater than zero",
+                variant: "destructive",
+            });
+            return;
+        }
+
+
+        setProcessingRequest(requestToProcess._id);
+        const { error, message } = await approveRequest(
+            requestToProcess._id,
+            approvalNotes || undefined,
+            amount
+        );
         if (error) {
             toast({
                 title: "Error",
-                description: `Failed to approve request: ${error}`,
+                description: error || `Failed to approve request: ${error}`,
                 variant: "destructive",
             });
         } else {
             toast({
                 title: "Success",
-                description: "Request approved successfully",
+                description: message || "Request approved successfully",
                 variant: "default",
             });
             // Refresh the page to show updated data
@@ -206,6 +248,8 @@ export default function RequestsTable({ data }: { data: Request[] }) {
         }
         setProcessingRequest(null);
         setRequestToProcess(null);
+        setApprovedAmount(""); // Reset the approved amount
+        setApprovalNotes(""); // Reset the approval notes
     };
 
     const handleReject = async () => {
@@ -377,7 +421,7 @@ export default function RequestsTable({ data }: { data: Request[] }) {
 
                                 <div>
                                     <h3 className="text-sm font-medium text-muted-foreground">Type</h3>
-                                    <p className="text-sm">{selectedRequest.type === 'recharge' ? 'Recharge' : 'Redeem'}</p>
+                                    <p className="text-sm">{selectedRequest.type}</p>
                                 </div>
 
                                 <div>
@@ -482,9 +526,70 @@ export default function RequestsTable({ data }: { data: Request[] }) {
                     <AlertDialogHeader>
                         <AlertDialogTitle>Approve Request</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Are you sure you want to approve this request? This action cannot be undone.
+                            Review the request details and enter the approved amount.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
+
+                    {requestToProcess && (
+                        <>
+                            <div className="grid grid-cols-2 gap-4 py-2">
+                                <div>
+                                    <h3 className="text-sm font-medium text-muted-foreground">Request Type</h3>
+                                    <p className="font-medium">
+                                        {requestToProcess.type === 'deposit' ? 'Deposit' : 'Withdrawal'}
+                                    </p>
+                                </div>
+                                <div>
+                                    <h3 className="text-sm font-medium text-muted-foreground">Requested Amount</h3>
+                                    <p className="font-medium text-lg">
+                                        {formatCurrency(requestToProcess.amount)}
+                                    </p>
+                                </div>
+                                <div>
+                                    <h3 className="text-sm font-medium text-muted-foreground">User</h3>
+                                    <p className="font-medium">
+                                        {requestToProcess.userId.name}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="border-t my-2"></div>
+
+                            <div className="py-3">
+                                <label htmlFor="approved-amount" className="text-sm font-medium mb-2 block">
+                                    Approved Amount <span className="text-red-500">*</span>
+                                </label>
+                                <Input
+                                    id="approved-amount"
+                                    type="number"
+                                    value={approvedAmount}
+                                    onChange={(e) => setApprovedAmount(e.target.value)}
+                                    className="w-full"
+                                    step="0.01"
+                                    required
+                                    min="0.01"
+                                    placeholder="Enter approved amount"
+                                />
+                                <p className="text-sm text-muted-foreground mt-2">
+                                    Enter the exact amount you want to approve (required)
+                                </p>
+                            </div>
+
+                            <div className="py-3">
+                                <label htmlFor="approval-notes" className="text-sm font-medium mb-2 block">
+                                    Notes (Optional)
+                                </label>
+                                <textarea
+                                    id="approval-notes"
+                                    value={approvalNotes}
+                                    onChange={(e) => setApprovalNotes(e.target.value)}
+                                    className="w-full min-h-[100px] p-3 border rounded-md bg-background"
+                                    placeholder="Add any notes regarding this approval..."
+                                />
+                            </div>
+                        </>
+                    )}
+
                     <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction
