@@ -1,5 +1,4 @@
 import { Pagination } from "@/components/pagination";
-import { Button } from "@/components/ui/button";
 import { WalletForm } from "@/components/wallet-form";
 import WalletsTable from "@/components/wallets-table";
 import { Roles, UserQuery, WalletType } from "@/lib/types";
@@ -7,7 +6,6 @@ import Link from "next/link";
 import { getWalletsByType, getWalletTypes } from "../actions";
 import Image from "next/image";
 import { whoIam } from "@/lib/actions";
-import { root } from "postcss";
 import { SelectWalletCreator } from "@/components/select-wallet-creator";
 
 export const dynamic = "force-dynamic";

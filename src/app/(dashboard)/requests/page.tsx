@@ -1,12 +1,11 @@
 import { Pagination } from "@/components/pagination";
-import { RequestQuery } from "./type";
+import { RequestQuery, RequestType } from "./type";
 import { getAllRequests } from "./actions";
 import RequestsTable from "@/components/requests-table";
 import { CreateRequestButton } from "@/components/request-form";
 import BackToHome from "@/components/back-to-home";
+import { whoIam } from "@/lib/actions";
 
-export const dynamic = 'force-dynamic';
-export const fetchCache = 'force-no-store';
 
 export default async function RequestsPage(props: {
     searchParams?: Promise<{
@@ -28,12 +27,15 @@ export default async function RequestsPage(props: {
     const searchParams = await props.searchParams;
     const shouldAutoOpen = !!(searchParams?.walletId && searchParams?.qrId);
 
+    const { data: userData } = await whoIam();
+    const isPlayer = userData?.role?.name === 'player';
+
 
     const filters: RequestQuery = {
         page: searchParams?.page ? parseInt(searchParams.page) : 1,
         limit: searchParams?.limit ? parseInt(searchParams.limit) : 10,
         status: searchParams?.status as 'pending' | 'approved' | 'rejected',
-        type: searchParams?.type as 'recharge' | 'redeem',
+        type: searchParams?.type as RequestType,
         sortBy: searchParams?.sortBy,
         sortOrder: searchParams?.sortOrder as 'asc' | 'desc',
         search: searchParams?.search,
@@ -48,7 +50,7 @@ export default async function RequestsPage(props: {
 
     return (
         <div className="p-4 sm:p-10">
-            <BackToHome />
+            <BackToHome isPlayer={isPlayer} />
 
             <div className="flex items-center justify-between gap-4 mb-6">
                 <h1 className="text-2xl font-bold">Requests</h1>

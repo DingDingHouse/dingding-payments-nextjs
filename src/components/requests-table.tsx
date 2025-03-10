@@ -9,7 +9,7 @@ import Link from "next/link"
 import { Input } from "./ui/input"
 import { DateRangePicker } from "./date-range-picker"
 import { ArrowDown, ArrowUp, CheckCircle, Eye, XCircle } from "lucide-react"
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import Image from "next/image"
 import {
     AlertDialog,
@@ -39,6 +39,12 @@ const statusVariants: Record<RequestStatus, { label: string, variant: "default" 
     rejected: { label: "Rejected", variant: "destructive" },
 }
 
+const ResponsiveCell = ({ label, value }: { label: string; value: React.ReactNode }) => (
+    <div className="flex flex-col space-y-1">
+        <span className="text-xs font-medium text-muted-foreground md:hidden">{label}</span>
+        <div className="truncate">{value}</div>
+    </div>
+);
 
 const getRequestColumns = (
     onViewDetails: (request: Request) => void,
@@ -50,15 +56,20 @@ const getRequestColumns = (
             accessorKey: 'createdAt',
             header: 'Date',
             cell: ({ row }) => (
-                <div className="flex items-center">
-                    {new Date(row.getValue('createdAt')).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                    })}
-                </div>
+                <ResponsiveCell
+                    label="Date"
+                    value={
+                        <div className="whitespace-nowrap">
+                            {new Date(row.getValue('createdAt')).toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'short',
+                                day: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                            })}
+                        </div>
+                    }
+                />
             )
         },
         {
@@ -67,9 +78,14 @@ const getRequestColumns = (
             cell: ({ row }) => {
                 const user = row.original.userId;
                 return (
-                    <div className="flex items-center">
-                        {user.name} ({user.username})
-                    </div>
+                    <ResponsiveCell
+                        label="User"
+                        value={
+                            <div className="truncate max-w-[150px]" title={`${user.name} (${user.username})`}>
+                                {user.name} <span className="text-muted-foreground">({user.username})</span>
+                            </div>
+                        }
+                    />
                 );
             }
         },
@@ -79,13 +95,18 @@ const getRequestColumns = (
             cell: ({ getValue }) => {
                 const type = getValue() as string;
                 return (
-                    <div className="flex justify-center">
-                        {type === 'deposit' ? (
-                            <StatusBadge status="Deposit" variant="transaction" />
-                        ) : (
-                            <StatusBadge status="Withdrawal" variant="transaction" />
-                        )}
-                    </div>
+                    <ResponsiveCell
+                        label="Type"
+                        value={
+                            <div className="flex justify-start md:justify-center">
+                                {type === 'deposit' ? (
+                                    <StatusBadge status="Deposit" variant="transaction" />
+                                ) : (
+                                    <StatusBadge status="Withdrawal" variant="transaction" />
+                                )}
+                            </div>
+                        }
+                    />
                 );
             }
         },
@@ -93,11 +114,57 @@ const getRequestColumns = (
             accessorKey: 'amount',
             header: 'Amount',
             cell: ({ row }) => (
-                <div className="flex items-center">
-                    {formatCurrency(row.getValue('amount'))}
-                </div>
+                <ResponsiveCell
+                    label="Amount"
+                    value={
+                        <div className="font-medium">
+                            {formatCurrency(row.getValue('amount'))}
+                        </div>
+                    }
+                />
             )
         },
+
+        {
+            accessorKey: 'bankDetails',
+            header: 'Payment Method',
+            cell: ({ row }) => {
+                const bankDetails = row.original.bankDetails;
+                if (!bankDetails) return <ResponsiveCell label="Payment Method" value={<div className="text-muted-foreground text-sm">-</div>} />;
+
+                if (bankDetails.upiId) {
+                    return (
+                        <ResponsiveCell
+                            label="Payment Method"
+                            value={
+                                <div className="flex flex-col">
+                                    <span className="text-xs font-medium text-muted-foreground">UPI</span>
+                                    <span className="text-sm truncate max-w-[120px]" title={bankDetails.upiId}>{bankDetails.upiId}</span>
+                                </div>
+                            }
+                        />
+                    );
+                } else if (bankDetails.bankName) {
+                    return (
+                        <ResponsiveCell
+                            label="Payment Method"
+                            value={
+                                <div className="flex flex-col">
+                                    <span className="text-xs font-medium text-muted-foreground">Bank</span>
+                                    <span className="text-sm truncate max-w-[120px]" title={bankDetails.bankName}>{bankDetails.bankName}</span>
+                                    <span className="text-xs text-muted-foreground" title={bankDetails.accountNumber}>
+                                        {bankDetails.accountNumber?.slice(-4).padStart(bankDetails.accountNumber?.length, '•')}
+                                    </span>
+                                </div>
+                            }
+                        />
+                    );
+                }
+
+                return <ResponsiveCell label="Payment Method" value={<div className="text-muted-foreground text-sm">-</div>} />;
+            }
+        },
+
         {
             accessorKey: 'status',
             header: 'Status',
@@ -105,17 +172,25 @@ const getRequestColumns = (
                 const status = getValue() as RequestStatus;
                 const { label, variant } = statusVariants[status];
                 return (
-                    <StatusBadge status={label} variant={variant} />
-                );
+                    <ResponsiveCell
+                        label="Status"
+                        value={<StatusBadge status={label} variant={variant} />}
+                    />);
             }
         },
+
         {
             accessorKey: 'approvedAmount',
             header: 'Approved Amount',
             cell: ({ row }) => (
-                <div className="flex items-center text-center">
-                    {formatCurrency(row.getValue('approvedAmount'))}
-                </div>
+                <ResponsiveCell
+                    label="Approved"
+                    value={
+                        <div className="font-medium">
+                            {formatCurrency(row.getValue('approvedAmount'))}
+                        </div>
+                    }
+                />
             )
         },
         {
@@ -124,17 +199,34 @@ const getRequestColumns = (
             cell: ({ getValue }) => {
                 const approver = getValue() as Request['approverId'];
                 return (
-                    <div className="flex items-center">
-                        {approver ? approver.name : '-'}
-                    </div>
+                    <ResponsiveCell
+                        label="Processed By"
+                        value={
+                            <div className="truncate max-w-[120px]" title={approver?.name || '-'}>
+                                {approver ? approver.name : '-'}
+                            </div>
+                        }
+                    />
                 );
             }
         },
+
         {
             id: 'actions',
             cell: ({ row }) => {
                 const request = row.original;
                 const isOwnRequest = currentUser?._id === request.userId._id;
+
+                // Don't render any buttons during SSR
+                const [mounted, setMounted] = useState(false);
+
+                useEffect(() => {
+                    setMounted(true);
+                }, []);
+
+                if (!mounted) {
+                    return <div className="flex justify-end gap-2"></div>;
+                }
 
                 return (
                     <div className="flex justify-end gap-2">
@@ -160,7 +252,6 @@ const getRequestColumns = (
 
 export default function RequestsTable({ data }: { data: Request[] }) {
 
-    console.log("REQYESR DATA", data)
     const router = useRouter();
     const searchParams = useSearchParams();
     const pathname = usePathname();
@@ -302,48 +393,121 @@ export default function RequestsTable({ data }: { data: Request[] }) {
     return (
         <div className="space-y-6">
             <div className="mb-6 overflow-x-auto">
-                <div className="flex flex-wrap gap-2 min-w-max">
+
+
+                <div className="flex flex-nowrap gap-2 pb-2 min-w-max">
                     <Button
                         asChild
                         variant={!status && !type ? 'default' : 'outline'}
+                        size="sm"
+                        className="min-w-[80px]"
                     >
-                        <Link href={pathname}>All Requests</Link>
+                        <Link href={pathname}>All</Link>
                     </Button>
                     <Button
                         asChild
                         variant={status === 'pending' ? 'default' : 'outline'}
+                        size="sm"
+                        className="min-w-[80px]"
                     >
                         <Link href="?status=pending">Pending</Link>
                     </Button>
                     <Button
                         asChild
                         variant={status === 'approved' ? 'default' : 'outline'}
+                        size="sm"
+                        className="min-w-[80px]"
                     >
                         <Link href="?status=approved">Approved</Link>
                     </Button>
                     <Button
                         asChild
                         variant={status === 'rejected' ? 'default' : 'outline'}
+                        size="sm"
+                        className="min-w-[80px]"
                     >
                         <Link href="?status=rejected">Rejected</Link>
                     </Button>
                 </div>
+
+                <div className="flex flex-nowrap gap-2 pt-2 min-w-max">
+                    <span className="text-xs font-medium text-muted-foreground flex items-center mr-2">Type:</span>
+                    <Button
+                        asChild
+                        variant={type === 'deposit' ? 'default' : 'outline'}
+                        size="sm"
+                        className="min-w-[80px]"
+                    >
+                        <Link
+                            href={{
+                                pathname,
+                                query: {
+                                    ...Object.fromEntries(searchParams.entries()),
+                                    type: 'deposit'
+                                }
+                            }}
+                        >
+                            Deposits
+                        </Link>
+                    </Button>
+                    <Button
+                        asChild
+                        variant={type === 'withdrawal' ? 'default' : 'outline'}
+                        size="sm"
+                        className="min-w-[80px]"
+                    >
+                        <Link
+                            href={{
+                                pathname,
+                                query: {
+                                    ...Object.fromEntries(searchParams.entries()),
+                                    type: 'withdrawal'
+                                }
+                            }}
+                        >
+                            Withdrawals
+                        </Link>
+                    </Button>
+                    {type && (
+                        <Button
+                            asChild
+                            variant="ghost"
+                            size="sm"
+                            className="min-w-[80px]"
+                        >
+                            <Link
+                                href={{
+                                    pathname,
+                                    query: {
+                                        ...Object.fromEntries(
+                                            Object.entries(Object.fromEntries(searchParams.entries()))
+                                                .filter(([key]) => key !== 'type')
+                                        )
+                                    }
+                                }}
+                            >
+                                Clear
+                            </Link>
+                        </Button>
+                    )}
+                </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+            <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between mb-4">
                 <Input
                     placeholder="Search requests..."
                     defaultValue={search || ""}
                     onChange={(e) => debouncedSearch(e.target.value)}
                     className="max-w-xs"
                 />
-                <div className="flex flex-col sm:flex-row gap-4 sm:gap-2">
+                <div className="flex flex-wrap gap-2 items-center">
                     <DateRangePicker />
                     <div className="flex items-center gap-2">
                         <Button
                             asChild
                             variant={sortOrder === 'desc' ? 'default' : 'outline'}
                             size="sm"
+                            className="whitespace-nowrap"
                         >
                             <Link
                                 href={{
@@ -363,6 +527,7 @@ export default function RequestsTable({ data }: { data: Request[] }) {
                             asChild
                             variant={sortOrder === 'asc' ? 'default' : 'outline'}
                             size="sm"
+                            className="whitespace-nowrap"
                         >
                             <Link
                                 href={{
@@ -388,8 +553,15 @@ export default function RequestsTable({ data }: { data: Request[] }) {
                 </div>
             )}
 
-            <DataTable data={data || []} columns={columns} />
-
+            <div className="overflow-hidden rounded-md border">
+                <div className="overflow-x-auto">
+                    <DataTable
+                        data={data || []}
+                        columns={columns}
+                        className="w-full"
+                    />
+                </div>
+            </div>
             <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
                 <DialogContent className="sm:max-w-3xl">
                     <DialogHeader>
@@ -447,6 +619,42 @@ export default function RequestsTable({ data }: { data: Request[] }) {
                                     </p>
                                 </div>
 
+                                {/* Bank details section */}
+                                {selectedRequest.bankDetails && (
+                                    <div className="col-span-2">
+                                        <h3 className="text-sm font-medium text-muted-foreground mb-2">Payment Details</h3>
+                                        <div className="bg-muted/30 p-3 rounded-md">
+                                            {selectedRequest.bankDetails.upiId ? (
+                                                <div className="flex flex-col gap-1">
+                                                    <div className="flex justify-between">
+                                                        <span className="text-sm font-medium">UPI ID:</span>
+                                                        <span className="text-sm">{selectedRequest.bankDetails.upiId}</span>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="flex flex-col gap-1">
+                                                    <div className="flex justify-between">
+                                                        <span className="text-sm font-medium">Bank Name:</span>
+                                                        <span className="text-sm">{selectedRequest.bankDetails.bankName}</span>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                        <span className="text-sm font-medium">Account Name:</span>
+                                                        <span className="text-sm">{selectedRequest.bankDetails.accountName}</span>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                        <span className="text-sm font-medium">Account Number:</span>
+                                                        <span className="text-sm">{selectedRequest.bankDetails.accountNumber}</span>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                        <span className="text-sm font-medium">IFSC Code:</span>
+                                                        <span className="text-sm">{selectedRequest.bankDetails.ifscCode}</span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+
                                 {selectedRequest.transactionId && (
                                     <div>
                                         <h3 className="text-sm font-medium text-muted-foreground">Transaction ID</h3>
@@ -465,6 +673,21 @@ export default function RequestsTable({ data }: { data: Request[] }) {
                                     <div>
                                         <h3 className="text-sm font-medium text-muted-foreground">Processed By</h3>
                                         <p className="text-sm">{selectedRequest.approverId.name}</p>
+                                    </div>
+                                )}
+
+                                {selectedRequest.processedAt && (
+                                    <div>
+                                        <h3 className="text-sm font-medium text-muted-foreground">Processed At</h3>
+                                        <p className="text-sm">
+                                            {new Date(selectedRequest.processedAt).toLocaleDateString('en-US', {
+                                                year: 'numeric',
+                                                month: 'long',
+                                                day: 'numeric',
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                            })}
+                                        </p>
                                     </div>
                                 )}
                             </div>

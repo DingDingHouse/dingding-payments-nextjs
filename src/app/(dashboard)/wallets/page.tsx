@@ -1,10 +1,5 @@
-import { Pagination } from "@/components/pagination";
-import { Button } from "@/components/ui/button";
-import { WalletForm } from "@/components/wallet-form";
-import WalletsTable from "@/components/wallets-table";
-import { UserQuery } from "@/lib/types";
-import Link from "next/link";
-import { getWallets, getWalletTypes } from "./actions";
+
+import { getWalletTypes } from "./actions";
 import { WalletTypeForm } from "@/components/wallet-type-form";
 import { redirect } from "next/navigation";
 

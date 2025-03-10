@@ -1,32 +1,44 @@
 // Add these to your existing types file
 
 export type RequestStatus = 'pending' | 'approved' | 'rejected';
-export type RequestType = 'recharge' | 'redeem';
+export type RequestType = 'deposit' | 'withdrawal';
+
+export interface BankDetails {
+    upiId?: string;
+    bankName?: string;
+    accountNumber?: string;
+    accountName?: string;
+    ifscCode?: string;
+}
+
 
 export interface Request {
     _id: string;
-    amount: number;
-    approvedAmount?: number | null;
     userId: {
         _id: string;
         name: string;
         username: string;
     };
-    type: string;
+    type: RequestType;
+    amount: number;
+    approvedAmount: number | null;
     status: RequestStatus;
     transactionId?: string;
     qrReference?: string;
-    paymentScreenshot?: string;
-    notes?: string;
-    createdAt: string;
-    updatedAt: string;
+    path: string;
+    bankDetails?: BankDetails;
     approverId?: {
         _id: string;
         name: string;
         username: string;
     };
+    notes?: string;
+    paymentScreenshot?: string;
+    createdAt: string;
+    updatedAt: string;
     processedAt?: string;
 }
+
 export type RequestQuery = {
     page?: number;
     limit?: number;
