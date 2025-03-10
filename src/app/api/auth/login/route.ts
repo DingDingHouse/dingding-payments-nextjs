@@ -41,7 +41,8 @@ export async function POST(request: Request) {
             secure: process.env.NODE_ENV === 'production',
             sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
             maxAge: expiresIn,
-            path: '/'
+            path: '/',
+            domain: config.domain
 
         });
 
