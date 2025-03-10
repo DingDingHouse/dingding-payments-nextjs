@@ -234,8 +234,6 @@ export default function UsersTable({ data }: { data: User[] }) {
   const sortOrder = searchParams.get("sortOrder");
   const search = searchParams.get("search");
 
-  console.log("data", data);
-
   return (
     <div className="space-y-6">
       <div className="mb-6 overflow-x-auto">
