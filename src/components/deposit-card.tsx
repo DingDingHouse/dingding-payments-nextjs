@@ -1,6 +1,7 @@
 "use client"
 import { useAppSelector } from '@/lib/hooks'
 import { Coins } from 'lucide-react'
+import Link from 'next/link'
 import React from 'react'
 
 const DepositCard = () => {
@@ -27,9 +28,12 @@ const DepositCard = () => {
 
                 <div className="text-center">
                     <div className="relative inline-block">
-                        <button className="relative z-10 bg-gradient-to-r from-[#F9C80E] to-[#F86624] text-[#050A30] font-bold py-3 px-8 rounded-full hover:shadow-[0_0_20px_rgba(249,200,14,0.5)] transition-all">
+                        <Link
+                            href="/requests"
+                            className="relative z-10 bg-gradient-to-r from-[#F9C80E] to-[#F86624] text-[#050A30] font-bold py-3 px-8 rounded-full hover:shadow-[0_0_20px_rgba(249,200,14,0.5)] transition-all inline-block"
+                        >
                             GET STARTED
-                        </button>
+                        </Link>
                         <div className="absolute top-0 left-0 w-full h-full bg-white blur-md opacity-30 rounded-full"></div>
                     </div>
                 </div>

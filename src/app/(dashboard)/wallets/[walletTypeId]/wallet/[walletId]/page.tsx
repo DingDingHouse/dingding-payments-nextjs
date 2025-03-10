@@ -1,12 +1,13 @@
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
-import Link from "next/link";
-import { ChevronLeft } from "lucide-react";
+
 import { AddQRButton } from "@/components/add-qr-button";
 import { QRCodesTable } from "@/components/qr-codes-table";
 import { Pagination } from "@/components/pagination";
 import { WalletQRQuery } from "@/lib/types";
 import { getAWallet } from "../../../actions";
+import BackButton from "@/components/back-button";
+
 
 export default async function WalletPage(props: {
   params: Promise<{ walletId: string }>;
@@ -46,18 +47,13 @@ export default async function WalletPage(props: {
   }
 
   const wallet = data.data;
-  console.log(wallet);
 
   return (
     <div className="w-full mx-auto p-4 space-y-6">
       <div className="flex flex-col gap-6">
-        <Link
-          href="/wallets"
-          className="flex items-center text-sm text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ChevronLeft className="h-4 w-4 mr-1" />
-          Back to Wallets
-        </Link>
+  
+
+        <BackButton />
 
         <Card>
           <CardContent className="p-6">

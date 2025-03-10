@@ -4,9 +4,10 @@ import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { WalletTypeForm } from "@/components/wallet-type-form";
 
+export const dynamic = 'force-dynamic';
+
 export default async function WalletsTypeUPdatePage() {
   const { data, error } = await getWalletTypes();
-  console.log("data", data);
 
   if (error) {
     return <div>Error: {error}</div>;

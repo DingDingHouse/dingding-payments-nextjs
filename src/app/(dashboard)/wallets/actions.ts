@@ -4,7 +4,6 @@ import { config } from "@/lib/config";
 import getCookie from "@/lib/getCookie";
 import {
   ActionResponse,
-  QRCode,
   QRCodeQuery,
   QRCodeResponse,
   WalletQRQuery,
@@ -128,8 +127,7 @@ export async function getWalletsByType(
     }
 
     const url = new URL(
-      `${
-        config.server
+      `${config.server
       }/api/wallets/types/${walletTypeId}/wallets?${params.toString()}`
     );
 
@@ -463,9 +461,8 @@ export async function getQRCodes(
     if (query.sortBy) params.append("sortBy", query.sortBy);
     if (query.sortOrder) params.append("sortOrder", query.sortOrder);
 
-    const url = `${config.server}/api/wallets/${
-      query.walletId
-    }/qrcodes?${params.toString()}`;
+    const url = `${config.server}/api/wallets/${query.walletId
+      }/qrcodes?${params.toString()}`;
 
     const response = await fetch(url, {
       method: "GET",

@@ -100,14 +100,12 @@ export function TawkInit() {
 
                 // Make sure widget is shown when reloaded
                 window.Tawk_API?.showWidget();
-                console.log("User logged into Tawk chat:", currentUser.name);
             }
         };
 
         // Cleanup function when component unmounts
         return () => {
             if (window.Tawk_API) {
-                console.log("Ending Tawk.to chat session...");
                 window.Tawk_API.hideWidget(); // Hide chat widget
                 window.Tawk_API.endChat?.(); // End chat session if method exists
             }

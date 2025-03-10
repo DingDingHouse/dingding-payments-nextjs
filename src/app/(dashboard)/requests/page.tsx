@@ -5,7 +5,7 @@ import RequestsTable from "@/components/requests-table";
 import { CreateRequestButton } from "@/components/request-form";
 import BackToHome from "@/components/back-to-home";
 import { whoIam } from "@/lib/actions";
-
+export const dynamic = 'force-dynamic';
 
 export default async function RequestsPage(props: {
     searchParams?: Promise<{

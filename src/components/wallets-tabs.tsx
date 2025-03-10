@@ -23,14 +23,11 @@ interface WalletTabsProps {
     selectedWalletId?: string;
     qrCodesData: QRCodeResponse | null;
     qrCodesError: string | null;
+    walletTypeId: string; // Add this prop
 }
 
-export function WalletTabs({
-    walletData,
-    selectedWalletId,
-    qrCodesData,
-    qrCodesError
-}: WalletTabsProps) {
+export function WalletTabs({ walletData, selectedWalletId, qrCodesData, qrCodesError, walletTypeId }: WalletTabsProps) {
+
     const activeWalletId = selectedWalletId || walletData[0]?._id;
     const selectedWallet = walletData.find(w => w._id === activeWalletId);
 
@@ -62,7 +59,7 @@ export function WalletTabs({
                 {walletData.map((wallet) => (
                     <Link
                         key={wallet._id}
-                        href={`?walletId=${wallet._id}`}
+                        href={`?type=${walletTypeId}&id=${wallet._id}`}
                         className={cn(
                             "flex items-center gap-3 px-4 py-3 rounded-xl whitespace-nowrap transition-all",
                             activeWalletId === wallet._id

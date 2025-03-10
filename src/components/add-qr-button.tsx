@@ -41,7 +41,6 @@ export function AddQRButton({ walletId }: AddQRButtonProps) {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    console.log("button clicked");
     setLoading(true);
 
     try {
