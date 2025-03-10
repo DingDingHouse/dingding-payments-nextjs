@@ -105,11 +105,10 @@ export default async function WalletsPage(props: {
             {walletTypes?.map((walletType: WalletType) => (
               <div
                 key={walletType._id}
-                className={`flex gap-2 items-center p-2 rounded-md border cursor-pointer transition-all ${
-                  walletType._id === walletTypeId
-                    ? "bg-white text-black border-primary"
-                    : "border-gray-200 hover:border-gray-300"
-                }`}
+                className={`flex gap-2 items-center p-2 rounded-md border cursor-pointer transition-all ${walletType._id === walletTypeId
+                  ? "bg-white text-black border-primary"
+                  : "border-gray-200 hover:border-gray-300"
+                  }`}
               >
                 <Image
                   src={walletType.logo}

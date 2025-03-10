@@ -49,4 +49,5 @@ export type RequestQuery = {
     search?: string;
     from?: string;
     to?: string;
+    userId?: string;
 }

@@ -59,6 +59,8 @@ export async function getUserById(userId: string) {
             throw new Error(data.error?.message || 'Failed to fetch user data');
         }
 
+
+
         return {
             data: data.data,
             message: data.message,

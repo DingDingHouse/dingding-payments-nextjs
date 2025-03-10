@@ -24,6 +24,9 @@ export interface User {
     status: string;
     permissions: Permission[];
     createdBy: User;
+    createdAt: string;
+    updatedAt: string;
+    lastLogin: string | null;
 }
 
 interface UserState {

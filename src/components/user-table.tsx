@@ -45,6 +45,7 @@ import Link from "next/link";
 import { UserSearch } from "./user-search";
 import { DateRangePicker } from "./date-range-picker";
 import { User } from "@/lib/features/users/UsersSlice";
+import { Roles } from "@/lib/types";
 
 const userColumns: ColumnDef<User>[] = [
   {
@@ -59,6 +60,10 @@ const userColumns: ColumnDef<User>[] = [
   {
     accessorFn: (row) => row.role.name,
     header: "Role",
+  },
+  {
+    accessorKey: "credits",
+    header: "Credits",
   },
   {
     accessorKey: "status",
@@ -76,13 +81,13 @@ const userColumns: ColumnDef<User>[] = [
     cell: ({ getValue }) =>
       getValue()
         ? new Date(getValue() as string | number | Date).toLocaleDateString(
-            "en-US",
-            {
-              year: "numeric",
-              month: "long",
-              day: "numeric",
-            }
-          )
+          "en-US",
+          {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          }
+        )
         : "N/A",
   },
   {
@@ -99,6 +104,10 @@ const ActionMenu = ({ row }: { row: User }) => {
 
   const { toast } = useToast();
   const router = useRouter();
+
+  const detailsUrl = row.role.name.toLowerCase() === Roles.PLAYER
+    ? `/users/${row._id}/requests`
+    : `/users/${row._id}/descendants`;
 
   const handleDelete = async () => {
     const result = await deleteUser(row._id);
@@ -130,7 +139,7 @@ const ActionMenu = ({ row }: { row: User }) => {
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
           <DropdownMenuItem asChild>
-            <Link href={`/users/${row._id}`}>
+            <Link href={detailsUrl}>
               <UserIcon className="mr-2 h-4 w-4" />
               View Details
             </Link>
@@ -224,6 +233,8 @@ export default function UsersTable({ data }: { data: User[] }) {
   const view = searchParams.get("view");
   const sortOrder = searchParams.get("sortOrder");
   const search = searchParams.get("search");
+
+  console.log("data", data);
 
   return (
     <div className="space-y-6">
