@@ -271,7 +271,7 @@ export default function RequestsTable({ data }: { data: Request[] }) {
     const [approvalNotes, setApprovalNotes] = useState<string>("");
 
 
-    const currentUser = useAppSelector(state => state.users.currentUser);
+    const currentUser = useAppSelector((state: { users: { currentUser: any } }) => state.users.currentUser);
 
     const handleViewDetails = (request: Request) => {
         setSelectedRequest(request);

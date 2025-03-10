@@ -1,5 +1,4 @@
 import { DepositInstructions } from "@/components/deposite-instruction";
-import SupportButton, { SupportBadge } from "@/components/support-button";
 import { Badge } from "@/components/ui/badge";
 import { WalletTabs } from "@/components/wallets-tabs";
 import { ActionResponse, QRCodeResponse } from "@/lib/types";
@@ -7,6 +6,7 @@ import { Coins, FileText, LogOut, Sparkles, Star } from "lucide-react";
 import Link from "next/link";
 import { getQRCodes, getWallets } from "./wallets/actions";
 import DepositCard from "@/components/deposit-card";
+import { TawkWrapper } from "@/components/tawk-wrapper";
 
 export const dynamic = 'force-dynamic';
 export const fetchCache = 'force-no-store';
@@ -69,7 +69,21 @@ export default async function PlayerHomePage(props: {
                                 </div>
                             </div>
                         </Link>
-                        <SupportButton />
+                        <div
+                            className="bg-[rgba(0,0,0,0.4)] backdrop-blur-md border border-[#2C73D2]/30 rounded-xl p-4 shadow-lg hover:border-[#2C73D2]/60 transform transition hover:-translate-y-1 hover:shadow-[0_0_15px_rgba(44,115,210,0.3)] h-full cursor-pointer"
+                        >
+                            <TawkWrapper >
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2.5 bg-gradient-to-br from-[#4FB286] to-[#2C73D2] rounded-full shadow-lg">
+                                        <Sparkles className="h-5 w-5 text-white" />
+                                    </div>
+                                    <div>
+                                        <p className="font-semibold text-white">Support</p>
+                                        <p className="text-[#8EACCD] text-xs">Get help</p>
+                                    </div>
+                                </div>
+                            </TawkWrapper>
+                        </div>
                     </div>
 
 
@@ -126,9 +140,16 @@ export default async function PlayerHomePage(props: {
                             <h2 className="text-xl font-bold text-white">Select Payment Method</h2>
                             <p className="text-[#8EACCD] text-sm">Choose your preferred deposit option</p>
                         </div>
-                        <div className="hidden sm:block">
-                            <SupportBadge />
-                        </div>
+                        <TawkWrapper>
+                            <div className="hidden sm:block">
+                                <Badge
+                                    className="bg-[#2C73D2]/30 text-[#8EACCD] hover:bg-[#2C73D2]/50 cursor-pointer"
+                                >
+                                    Need Help?
+                                </Badge>
+
+                            </div>
+                        </TawkWrapper>
                     </div>
 
                     <div className="p-6">

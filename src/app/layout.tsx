@@ -4,6 +4,7 @@ import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "@/components/theme-provider";
 import StoreProvider from "./StoreProvider";
+import { TawkInit } from "@/components/tawk-init";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,6 +38,7 @@ export default function RootLayout({
             disableTransitionOnChange>
             {children}
             <Toaster />
+            <TawkInit />
           </ThemeProvider>
         </StoreProvider>
       </body>

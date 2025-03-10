@@ -1,4 +1,3 @@
-import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,6 +6,7 @@ import { WalletDetails } from "@/components/wallet-details";
 import { QRCodeGrid } from "@/components/qr-code-grid";
 import { QRCodeResponse } from "@/lib/types";
 import { Wallet2 } from "lucide-react";
+import { TawkWrapper } from "./tawk-wrapper";
 
 interface Wallet {
     _id: string;
@@ -46,9 +46,11 @@ export function WalletTabs({
                 <p className="text-[#8EACCD] max-w-md mx-auto mb-6">
                     Please contact support to set up payment methods for your account.
                 </p>
-                <Button className="bg-[#2C73D2] hover:bg-[#2C73D2]/80 text-white">
-                    Contact Support
-                </Button>
+                <TawkWrapper>
+                    <Button className="bg-[#2C73D2] hover:bg-[#2C73D2]/80 text-white">
+                        Contact Support
+                    </Button>
+                </TawkWrapper>
             </div>
         );
     }

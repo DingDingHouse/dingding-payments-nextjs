@@ -31,6 +31,7 @@ interface TawkAPI {
         name?: string;
         username?: string;
     };
+    sendMessage: (message: string) => void;
 }
 
 declare global {
@@ -73,7 +74,8 @@ export function TawkInit() {
                 visitor: {
                     name: "",
                     username: ""
-                }
+                },
+                sendMessage: (message: string) => { }
             };
         }
 
