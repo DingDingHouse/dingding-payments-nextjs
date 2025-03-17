@@ -5,6 +5,8 @@ import { getAllTransactions } from "./actions";
 import { whoIam } from "@/lib/actions";
 import BackToHome from "@/components/back-to-home";
 
+export const dynamic = 'force-dynamic';
+
 export default async function TransactionsPage(props: {
     searchParams?: Promise<{
         page?: string;
