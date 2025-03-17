@@ -29,7 +29,7 @@ export const TawkWrapper = ({
                     window.Tawk_API.minimize();
                 }
             } catch (error) {
-                console.error("Error with Tawk chat:", error);
+                console.log("Error with Tawk chat:", error);
             }
         }
 

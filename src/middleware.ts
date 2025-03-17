@@ -59,6 +59,22 @@ export function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/login', request.url));
     }
 
+    if (accessToken) {
+        try {
+            const tokenParts = accessToken.value.split('.');
+            const payload = JSON.parse(Buffer.from(tokenParts[1], 'base64').toString());
+
+            // Redirect to /users if the role is not 'player' and the user tries to access '/'
+            if (path === '/' && payload.role !== 'player') {
+                return NextResponse.redirect(new URL('/users', request.url));
+            }
+        } catch (error) {
+            const response = NextResponse.redirect(new URL('/login', request.url));
+            response.cookies.delete('accessToken');
+            return response;
+        }
+    }
+
     if (accessToken && isPublicPath) {
         return NextResponse.redirect(new URL('/', request.url));
     }

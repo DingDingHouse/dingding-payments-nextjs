@@ -23,6 +23,7 @@ const resourceIcons: Record<string, any> = {
     roles: Shield,
     wallets: Wallet,
     requests: FileText,
+    transactions: BarChart3
 }
 
 

@@ -13,8 +13,8 @@ const DepositCard = () => {
                     <Coins className="h-7 w-7 text-[#050A30]" />
                 </div>
                 <div>
-                    <h2 className="text-2xl font-bold text-white">Deposit Funds</h2>
-                    <p className="text-[#8EACCD]">Boost your gaming balance</p>
+                    <h2 className="text-2xl font-bold text-white">Available Credits</h2>
+                    <p className="text-[#8EACCD]">Check your current balance</p>
                 </div>
             </div>
 
@@ -29,10 +29,10 @@ const DepositCard = () => {
                 <div className="text-center">
                     <div className="relative inline-block">
                         <Link
-                            href="/requests"
+                            href="/transactions"
                             className="relative z-10 bg-gradient-to-r from-[#F9C80E] to-[#F86624] text-[#050A30] font-bold py-3 px-8 rounded-full hover:shadow-[0_0_20px_rgba(249,200,14,0.5)] transition-all inline-block"
                         >
-                            GET STARTED
+                            VIEW TRANSACTIONS
                         </Link>
                         <div className="absolute top-0 left-0 w-full h-full bg-white blur-md opacity-30 rounded-full"></div>
                     </div>

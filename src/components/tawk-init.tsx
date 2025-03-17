@@ -94,7 +94,7 @@ export function TawkInit() {
                     role: currentUser.role.name
                 }, function (error?: any) {
                     if (error) {
-                        console.error('Error setting Tawk attributes:', error);
+                        console.log('Error setting Tawk attributes:', error);
                     }
                 });
 

@@ -26,6 +26,8 @@ export function UpdateUserForm({ user, onSuccess }: UpdateUserFormProps) {
         username: user.username,
         status: user.status,
         password: '',
+        amount: '',
+        type: 'recharge' as 'recharge' | 'redeem'
     })
     const [showPassword, setShowPassword] = useState(false)
     const { toast } = useToast()
@@ -38,7 +40,12 @@ export function UpdateUserForm({ user, onSuccess }: UpdateUserFormProps) {
             if (formData.username !== user.username) payload.username = formData.username
             if (formData.status !== user.status) payload.status = formData.status
             if (formData.password) payload.password = formData.password
-
+            if (formData.amount) {
+                payload.credits = {
+                    type: formData.type,
+                    amount: Number(formData.amount)
+                }
+            }
 
             const result = await updateUser(user._id, payload)
 
@@ -58,7 +65,7 @@ export function UpdateUserForm({ user, onSuccess }: UpdateUserFormProps) {
             onSuccess()
 
         } catch (error) {
-            console.error('Update error:', error)
+            console.log('Update error:', error)
             toast({
                 variant: "destructive",
                 title: "Error",
@@ -102,11 +109,39 @@ export function UpdateUserForm({ user, onSuccess }: UpdateUserFormProps) {
                     </Select>
                 </div>
 
+
                 <div className="space-y-2">
                     <Label>Role</Label>
                     <Input
                         value={user.role.name}
                         disabled
+                    />
+                </div>
+            </div>
+
+
+            <div className="space-y-2">
+                <Label>Balance Adjustment</Label>
+                <div className="flex flex-col sm:flex-row gap-2">
+                    <Select
+                        value={formData.type}
+                        onValueChange={value => setFormData(prev => ({
+                            ...prev,
+                            type: value as 'recharge' | 'redeem'
+                        }))}>
+                        <SelectTrigger className="w-[200px]">
+                            <SelectValue placeholder="Select type" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="recharge">Recharge</SelectItem>
+                            <SelectItem value="redeem">Redeem</SelectItem>
+                        </SelectContent>
+                    </Select>
+                    <Input
+                        type="number"
+                        placeholder="Amount"
+                        value={formData.amount}
+                        onChange={e => setFormData(prev => ({ ...prev, amount: e.target.value }))}
                     />
                 </div>
             </div>

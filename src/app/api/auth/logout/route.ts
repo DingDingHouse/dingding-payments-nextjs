@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
                 // The error doesn't matter - we've already cleared the cookies
             }
         } catch (serverError) {
-            console.error('Error during server logout:', serverError);
+            console.log('Error during server logout:', serverError);
             // Again, this error doesn't impact our response - cookies are cleared
         }
 
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
         return res;
 
     } catch (error) {
-        console.error('Unexpected error during logout:', error);
+        console.log('Unexpected error during logout:', error);
 
         // Even on catastrophic error, clear cookies and return success
         const res = NextResponse.json(

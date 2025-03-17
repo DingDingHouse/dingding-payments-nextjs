@@ -33,7 +33,9 @@ const StatusBadge = ({ status, variant = 'status', className }: StatusBadgeProps
         if (variant === 'transaction') {
             switch (status.toLowerCase()) {
                 case "deposit":
+                case "recharge":
                     return "bg-emerald-100 text-emerald-800 border-emerald-200";
+                case "redeem":
                 case "withdrawal":
                     return "bg-rose-100 text-rose-800 border-rose-200";
                 default:
