@@ -1,45 +1,44 @@
-import { getAllRequests } from "@/app/(dashboard)/requests/actions";
-import { RequestQuery, RequestType } from "@/app/(dashboard)/requests/type";
+import { getTransactionsByUserAndDescendants } from "@/app/(dashboard)/transactions/actions";
 import { Pagination } from "@/components/pagination";
-import RequestsTable from "@/components/requests-table";
+import TransactionsTable from "@/components/transactions-table";
 import { Card } from "@/components/ui/card";
+import { TransactionQuery } from "@/lib/types";
 
 
-export default async function SingleUserRequestsPage(props: {
+export default async function SingleUserTransactionsPage(props: {
     params?: Promise<{ userId?: string }>,
     searchParams?: Promise<{
         page?: string;
         limit?: string;
-        status?: string;
-        type?: string;
         from?: string;
         to?: string;
+        type?: string;
         amount?: string;
         amountOp?: string;
         sortBy?: string;
         sortOrder?: string;
         search?: string;
-        walletId?: string;
-        qrId?: string;
     }>
 }) {
     const params = await props.params;
     const searchParams = await props.searchParams;
 
-    const filters: RequestQuery = {
+    const filters: TransactionQuery = {
         page: searchParams?.page ? parseInt(searchParams.page) : 1,
         limit: searchParams?.limit ? parseInt(searchParams.limit) : 10,
-        status: searchParams?.status as 'pending' | 'approved' | 'rejected',
-        type: searchParams?.type as RequestType,
-        sortBy: searchParams?.sortBy,
-        sortOrder: searchParams?.sortOrder as 'asc' | 'desc',
-        search: searchParams?.search,
         from: searchParams?.from,
         to: searchParams?.to,
-        userId: params?.userId
+        type: searchParams?.type as 'recharge' | 'redeem',
+        amount: searchParams?.amount ? parseFloat(searchParams.amount) : undefined,
+        amountOp: searchParams?.amountOp as 'gt' | 'lt' | 'eq',
+        sortBy: searchParams?.sortBy,
+        sortOrder: searchParams?.sortOrder as 'asc' | 'desc',
+        search: searchParams?.search
     };
 
-    const { data, error } = await getAllRequests(filters);
+    const userId = params?.userId ?? '';
+
+    const { data, error } = await getTransactionsByUserAndDescendants(userId, filters);
     if (error) {
         return <div className="p-4 text-red-500">Error: {error}</div>;
     }
@@ -47,8 +46,7 @@ export default async function SingleUserRequestsPage(props: {
 
     return (
         <Card>
-            <RequestsTable data={data?.data} />
-
+            <TransactionsTable data={data?.data} />
             {data?.meta && (
                 <Pagination
                     totalItems={data.meta.total}
@@ -57,7 +55,6 @@ export default async function SingleUserRequestsPage(props: {
                     className="justify-end flex-wrap mt-4"
                 />
             )}
-
         </Card>
     )
 }

@@ -1,7 +1,31 @@
+import { LucideIcon, Receipt, Users } from "lucide-react"
+
 export enum Roles {
   ROOT = "root",
   PLAYER = "player",
 }
+
+export type NavButton = {
+  label: string;
+  href: string;
+  icon: LucideIcon;
+};
+
+export type RoleViews = {
+  [key in Roles]: NavButton[];
+};
+
+export const roleViews: RoleViews = {
+  [Roles.ROOT]: [
+    { label: 'Descendants', href: '/users/[userId]/descendants', icon: Users },
+    { label: 'Transactions', href: '/users/[userId]/transactions', icon: Users },
+    { label: 'Requests', href: '/users/[userId]/requests', icon: Receipt },
+  ],
+  [Roles.PLAYER]: [
+    { label: 'Transactions', href: '/users/[userId]/transactions', icon: Users },
+    { label: 'Requests', href: '/users/[userId]/requests', icon: Receipt },
+  ],
+};
 
 export type RolesResponse = {
   success: boolean;

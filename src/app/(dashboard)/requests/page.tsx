@@ -4,7 +4,9 @@ import { getAllRequests } from "./actions";
 import RequestsTable from "@/components/requests-table";
 import { CreateRequestButton } from "@/components/request-form";
 import BackToHome from "@/components/back-to-home";
-import { whoIam } from "@/lib/actions";
+import getCookie from "@/lib/getCookie";
+import { decodeToken } from "@/lib/utils";
+import { Roles } from "@/lib/types";
 export const dynamic = 'force-dynamic';
 
 export default async function RequestsPage(props: {
@@ -27,9 +29,9 @@ export default async function RequestsPage(props: {
     const searchParams = await props.searchParams;
     const shouldAutoOpen = !!(searchParams?.walletId && searchParams?.qrId);
 
-    const { data: userData } = await whoIam();
-    const isPlayer = userData?.role?.name === 'player';
-
+    const cookie = await getCookie('accessToken');
+    const decodedToken = cookie ? decodeToken(cookie) : null;
+    const isPlayer = decodedToken?.role === Roles.PLAYER;
 
     const filters: RequestQuery = {
         page: searchParams?.page ? parseInt(searchParams.page) : 1,

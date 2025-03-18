@@ -1,9 +1,10 @@
 import { Pagination } from "@/components/pagination";
 import TransactionsTable from "@/components/transactions-table";
-import { TransactionQuery } from "@/lib/types";
+import { Roles, TransactionQuery } from "@/lib/types";
 import { getAllTransactions } from "./actions";
-import { whoIam } from "@/lib/actions";
 import BackToHome from "@/components/back-to-home";
+import getCookie from "@/lib/getCookie";
+import { decodeToken } from "@/lib/utils";
 
 export const dynamic = 'force-dynamic';
 
@@ -36,8 +37,9 @@ export default async function TransactionsPage(props: {
         search: searchParams?.search
     };
 
-    const { data: userData } = await whoIam();
-    const isPlayer = userData?.role?.name === 'player';
+    const cookie = await getCookie('accessToken');
+    const decodedToken = cookie ? decodeToken(cookie) : null;
+    const isPlayer = decodedToken?.role === Roles.PLAYER;
 
 
     const { data, error } = await getAllTransactions(filters);

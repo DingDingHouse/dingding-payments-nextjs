@@ -9,7 +9,7 @@ export function decodeToken(token: string) {
   try {
     const base64Payload = token.split('.')[1];
     const payload = atob(base64Payload);
-    return JSON.parse(payload) as { userId: string };
+    return JSON.parse(payload) as { userId: string, role: string };
   } catch {
     return null;
   }
