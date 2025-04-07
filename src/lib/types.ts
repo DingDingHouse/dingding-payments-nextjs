@@ -309,7 +309,7 @@ export interface Descendant {
   };
 }
 
-export type Banner = {
+export type IBanner = {
   _id: string;
   title: string;
   image: string;

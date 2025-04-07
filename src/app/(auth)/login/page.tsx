@@ -11,14 +11,12 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
-import c1image from '../../../../public/assets/c1.png'
-import g1image from '../../../../public/assets/g1.jpg'
 import p1 from '../../../../public/assets/dollar.jpeg'
 import p2 from '../../../../public/assets/rupee.png'
 import Link from "next/link";
 import { Star, X } from "lucide-react";
 import { getBanners, getPlatform } from "@/lib/actions";
-import { Banner, IPlatform } from "@/lib/types";
+import { IBanner, IPlatform } from "@/lib/types";
 
 
 
@@ -176,7 +174,7 @@ export default function LoginPage() {
                         }}
                     >
                         <CarouselContent>
-                            {banner?.map((image: Banner, index: number) => (
+                            {banner?.map((image: IBanner, index: number) => (
                                 image?.isActive && <CarouselItem key={index}>
                                     <div className="relative">
                                         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10"></div>
