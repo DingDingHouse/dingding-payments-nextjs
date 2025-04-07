@@ -90,13 +90,13 @@ export async function createBanner(
     const response = await fetch(`${config.server}/api/banners`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
-      body: JSON.stringify(data),
+      body: data,
       credentials: "include",
     });
 
+    console.log("Create Banner response", response);
     const responseData = await response.json();
 
     if (!response.ok) {
@@ -108,6 +108,7 @@ export async function createBanner(
       error: null,
     };
   } catch (error) {
+    console.log(error);
     return {
       data: null,
       error: error instanceof Error ? error.message : "Failed to create banner",
@@ -125,10 +126,9 @@ export async function updateBanner(
     const response = await fetch(`${config.server}/api/banners/${id}`, {
       method: "PUT",
       headers: {
-        "Content-Type": "application/json",
         Authorization: `Bearer ${accessToken}`,
       },
-      body: JSON.stringify(data),
+      body: data,
       credentials: "include",
     });
 

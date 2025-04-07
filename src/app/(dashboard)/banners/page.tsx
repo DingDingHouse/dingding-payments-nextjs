@@ -3,8 +3,8 @@ import { BannerQuery, Roles } from "@/lib/types";
 import { decodeToken } from "@/lib/utils";
 import { getAllBanners } from "./actions";
 import BackToHome from "@/components/back-to-home";
-import { Pagination } from "@/components/pagination";
 import BannerTable from "@/components/banner-table";
+import { BannerForm } from "@/components/banner-form";
 
 export const dynamic = "force-dynamic";
 
@@ -45,6 +45,7 @@ export default async function BannerPage(props: {
 
       <div className="flex items-center justify-between gap-4 mb-6">
         <h1 className="text-2xl font-bold">Banners</h1>
+        <BannerForm />
       </div>
 
       <BannerTable data={data} />
