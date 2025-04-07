@@ -216,7 +216,7 @@ const BannerTable = ({ data }: { data: Platform[] }) => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
         <Input
-          placeholder="Search transactions..."
+          placeholder="Search Platforms..."
           defaultValue={search || ""}
           onChange={(e) => debouncedSearch(e.target.value)}
           className="max-w-xs"

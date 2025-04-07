@@ -7,6 +7,7 @@ import StatusBadge from "./status-badge";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Button } from "./ui/button";
 import Link from "next/link";
+import Image from "next/image";
 import { Input } from "./ui/input";
 import { DateRangePicker } from "./date-range-picker";
 import {
@@ -43,12 +44,25 @@ import { UpdateBannerForm } from "./banner-update";
 
 const BannerColumns: ColumnDef<Banner>[] = [
   {
-    accessorKey: "title",
-    header: "Title",
+    accessorKey: "image",
+    header: "Image",
+    cell: ({ row }) => {
+      return (
+        <div className="flex items-center">
+          <Image
+            src={row.original.image}
+            alt={row.original.title}
+            width={50}
+            height={50}
+            className="w-20 h-10 rounded-full"
+          />
+        </div>
+      );
+    },
   },
   {
-    accessorKey: "url",
-    header: "Url",
+    accessorKey: "title",
+    header: "Title",
   },
   {
     accessorKey: "isActive",
@@ -199,70 +213,13 @@ const BannerTable = ({ data }: { data: Banner[] }) => {
   );
   return (
     <div className="space-y-6">
-      {/* <div className="mb-6 overflow-x-auto">
-        <div className="flex gap-2 min-w-max">
-          <Button asChild variant={!type ? "default" : "outline"}>
-            <Link href={pathname}>All Transactions</Link>
-          </Button>
-          <Button asChild variant={type === "recharge" ? "default" : "outline"}>
-            <Link href="?type=recharge">Recharge</Link>
-          </Button>
-          <Button asChild variant={type === "redeem" ? "default" : "outline"}>
-            <Link href="?type=redeem">Redeem</Link>
-          </Button>
-        </div>
-      </div> */}
-
       <div className="flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
         <Input
-          placeholder="Search transactions..."
+          placeholder="Search Banners..."
           defaultValue={search || ""}
           onChange={(e) => debouncedSearch(e.target.value)}
           className="max-w-xs"
         />
-        <div className="flex flex-col sm:flex-row gap-4 sm:gap-2">
-          <DateRangePicker />
-          <div className="flex items-center gap-2">
-            <Button
-              asChild
-              variant={sortOrder === "desc" ? "default" : "outline"}
-              size="sm"
-            >
-              <Link
-                href={{
-                  pathname,
-                  query: {
-                    ...Object.fromEntries(searchParams.entries()),
-                    sortBy: "createdAt",
-                    sortOrder: "desc",
-                  },
-                }}
-              >
-                <ArrowDown className="mr-2 h-4 w-4" />
-                Latest
-              </Link>
-            </Button>
-            <Button
-              asChild
-              variant={sortOrder === "asc" ? "default" : "outline"}
-              size="sm"
-            >
-              <Link
-                href={{
-                  pathname,
-                  query: {
-                    ...Object.fromEntries(searchParams.entries()),
-                    sortBy: "createdAt",
-                    sortOrder: "asc",
-                  },
-                }}
-              >
-                <ArrowUp className="mr-2 h-4 w-4" />
-                Oldest
-              </Link>
-            </Button>
-          </div>
-        </div>
       </div>
 
       <DataTable data={data || []} columns={BannerColumns} />

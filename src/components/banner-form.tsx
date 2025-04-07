@@ -46,7 +46,7 @@ export function BannerForm() {
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Logo is required",
+          description: "Image is required",
         });
         return;
       }
