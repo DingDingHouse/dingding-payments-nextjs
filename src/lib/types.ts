@@ -273,3 +273,22 @@ export interface Descendant {
     name: string;
   };
 }
+
+export type Banner = {
+  _id: string;
+  title: string;
+  image: string;
+  isActive: boolean;
+  createdAt: string; // or Date if you parse it
+  updatedAt: string; // or Date if you parse it
+  __v: number;
+};
+
+export interface IPlatform {
+  _id: string;
+  name: string;
+  url: string;
+  image: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

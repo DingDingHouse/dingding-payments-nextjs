@@ -763,3 +763,65 @@ export async function getAllGames(query?: GamesQuery): Promise<ActionResponse<an
         };
     }
 }
+
+export async function getBanners() {
+    try {
+        const response = await fetch(`${config.server}/api/banners`, {
+            method: 'GET', 
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data?.error?.message || 'Failed to fetch banners');
+        }
+
+        return {
+            data: {
+                data: data,
+                meta: data,
+            },
+            error: null,
+        };
+    } catch (error) {
+        console.error('Error fetching banners:', error);
+        return {
+            data: null,
+            error: error instanceof Error ? error.message : 'Failed to fetch banners',
+        };
+    }
+}
+
+export async function getPlatform() {
+    try {
+        const response = await fetch(`${config.server}/api/platforms`, {
+            method: 'GET', 
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        const data = await response.json();
+console.log(data,'hjghjghj');
+        if (!response.ok) {
+            throw new Error(data?.error?.message || 'Failed to fetch platform');
+        }
+
+        return {
+            data: {
+                data: data,
+                meta: data,
+            },
+            error: null,
+        };
+    } catch (error) {
+        console.error('Error fetching platform:', error);
+        return {
+            data: null,
+            error: error instanceof Error ? error.message : 'Failed to fetch platform',
+        };
+    }
+}
