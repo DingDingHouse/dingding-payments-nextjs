@@ -1,4 +1,4 @@
-import { LucideIcon, Receipt, Users } from "lucide-react"
+import { LucideIcon, Receipt, Users } from "lucide-react";
 
 export enum Roles {
   ROOT = "root",
@@ -17,13 +17,21 @@ export type RoleViews = {
 
 export const roleViews: RoleViews = {
   [Roles.ROOT]: [
-    { label: 'Descendants', href: '/users/[userId]/descendants', icon: Users },
-    { label: 'Transactions', href: '/users/[userId]/transactions', icon: Users },
-    { label: 'Requests', href: '/users/[userId]/requests', icon: Receipt },
+    { label: "Descendants", href: "/users/[userId]/descendants", icon: Users },
+    {
+      label: "Transactions",
+      href: "/users/[userId]/transactions",
+      icon: Users,
+    },
+    { label: "Requests", href: "/users/[userId]/requests", icon: Receipt },
   ],
   [Roles.PLAYER]: [
-    { label: 'Transactions', href: '/users/[userId]/transactions', icon: Users },
-    { label: 'Requests', href: '/users/[userId]/requests', icon: Receipt },
+    {
+      label: "Transactions",
+      href: "/users/[userId]/transactions",
+      icon: Users,
+    },
+    { label: "Requests", href: "/users/[userId]/requests", icon: Receipt },
   ],
 };
 
@@ -66,8 +74,6 @@ export interface Permission {
   permission: string;
 }
 
-
-
 export type Transaction = {
   _id: string;
   sender: {
@@ -80,6 +86,23 @@ export type Transaction = {
   };
   type: "recharge" | "redeem";
   amount: number;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type Banner = {
+  _id: string;
+  title: string;
+  image: string;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+export type Platform = {
+  _id: string;
+  name: string;
+  url: string;
+  image: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -183,6 +206,18 @@ export type TransactionQuery = {
   sortBy?: string;
   sortOrder?: "asc" | "desc";
   search?: string;
+};
+
+export type BannerQuery = {
+  page?: number;
+  limit?: number;
+  from?: string;
+  to?: string;
+  sortBy?: string;
+  sortOrder?: "asc" | "desc";
+  search?: string;
+  status?: string;
+  isActive?: "true" | "false";
 };
 
 export type GamesQuery = {
