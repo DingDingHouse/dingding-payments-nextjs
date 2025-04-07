@@ -11,21 +11,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { Banner, Wallet } from "@/lib/types";
+import { Banner, Platform, Wallet } from "@/lib/types";
 import { updateWallet } from "@/app/(dashboard)/wallets/actions";
 import { title } from "process";
 import { updateBanner } from "@/app/(dashboard)/banners/actions";
+import { updatePlatform } from "@/app/(dashboard)/platforms/actions";
 
-interface UpdateBannerFormProps {
-  banner: Banner;
+interface UpdatePlatformFormProps {
+  platform: Platform;
   onSuccess: () => void;
 }
 
-export function UpdateBannerForm({ banner, onSuccess }: UpdateBannerFormProps) {
+export function UpdatePlatformForm({
+  platform,
+  onSuccess,
+}: UpdatePlatformFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    title: banner.title,
-    isActive: banner.isActive,
+    name: platform.name,
+    url: platform.url,
     image: null as File | null,
   });
 
@@ -39,12 +43,12 @@ export function UpdateBannerForm({ banner, onSuccess }: UpdateBannerFormProps) {
       // Only include fields that changed
       const form = new FormData();
 
-      if (formData.title !== banner.title) {
-        form.append("title", formData.title);
+      if (formData.name !== platform.name) {
+        form.append("name", formData.name);
       }
 
-      if (formData.isActive !== banner.isActive) {
-        form.append("isActive", formData.isActive ? "true" : "false");
+      if (formData.url !== platform.url) {
+        form.append("url", formData.url);
       }
 
       if (formData.image) {
@@ -61,7 +65,7 @@ export function UpdateBannerForm({ banner, onSuccess }: UpdateBannerFormProps) {
         return;
       }
 
-      const { error } = await updateBanner(banner._id, form);
+      const { error } = await updatePlatform(platform._id, form);
 
       if (error) {
         toast({
@@ -74,14 +78,14 @@ export function UpdateBannerForm({ banner, onSuccess }: UpdateBannerFormProps) {
 
       toast({
         title: "Success",
-        description: "Banner updated successfully",
+        description: "Platform updated successfully",
       });
       onSuccess();
     } catch {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to update banner",
+        description: "Failed to update platform",
       });
     } finally {
       setIsLoading(false);
@@ -91,31 +95,20 @@ export function UpdateBannerForm({ banner, onSuccess }: UpdateBannerFormProps) {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <Input
-        placeholder="Banner Title"
-        value={formData.title}
+        placeholder="Platform Name"
+        value={formData.name}
         onChange={(e) =>
-          setFormData((prev) => ({ ...prev, title: e.target.value }))
+          setFormData((prev) => ({ ...prev, name: e.target.value }))
         }
       />
 
-      <Select
-        value={formData.isActive ? "true" : "false"}
-        onValueChange={(value) =>
-          setFormData((prev) => ({
-            ...prev,
-            isActive: value === "true" ? true : false,
-          }))
+      <Input
+        placeholder="Platform URL"
+        value={formData.url}
+        onChange={(e) =>
+          setFormData((prev) => ({ ...prev, url: e.target.value }))
         }
-        required
-      >
-        <SelectTrigger>
-          <SelectValue placeholder="Select status" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="true">True</SelectItem>
-          <SelectItem value="false">False</SelectItem>
-        </SelectContent>
-      </Select>
+      />
 
       <Input
         type="file"
@@ -129,7 +122,7 @@ export function UpdateBannerForm({ banner, onSuccess }: UpdateBannerFormProps) {
       />
 
       <Button type="submit" disabled={isLoading}>
-        {isLoading ? "Updating..." : "Update Banner"}
+        {isLoading ? "Updating..." : "Update Platform"}
       </Button>
     </form>
   );

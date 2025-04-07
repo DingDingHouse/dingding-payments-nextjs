@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,26 +12,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useRouter } from "next/navigation";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
 import { useAppSelector } from "@/lib/hooks";
-import { Descendant, Roles } from "@/lib/types";
-import { createBanner } from "@/app/(dashboard)/banners/actions";
+import { createPlatform } from "@/app/(dashboard)/platforms/actions";
 
-export function BannerForm() {
-  const user = useAppSelector((state) => state.users.currentUser);
-
+export function PlatformForm() {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
+    url: "",
     image: null as File | null,
-    isActive: true,
   });
 
   const { toast } = useToast();
@@ -46,17 +36,17 @@ export function BannerForm() {
         toast({
           variant: "destructive",
           title: "Error",
-          description: "Logo is required",
+          description: "Image is required",
         });
         return;
       }
 
       const form = new FormData();
-      form.append("title", formData.name);
+      form.append("name", formData.name);
+      form.append("url", formData.url);
       form.append("image", formData.image);
-      form.append("isActive", formData.isActive.toString());
 
-      const { data, error } = await createBanner(form);
+      const { data, error } = await createPlatform(form);
       if (error) {
         toast({
           variant: "destructive",
@@ -69,11 +59,11 @@ export function BannerForm() {
       if (data) {
         toast({
           title: "Success",
-          description: `Wallet "${data.name}" created successfully`,
+          description: `Platform created successfully`,
         });
         setFormData({
           name: "",
-          isActive: true,
+          url: "",
           image: null,
         });
         setOpen(false);
@@ -83,7 +73,7 @@ export function BannerForm() {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to create banner",
+        description: "Failed to create platform",
       });
     } finally {
       setIsLoading(false);
@@ -93,15 +83,15 @@ export function BannerForm() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button>Add Banner</Button>
+        <Button>Add Platform</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create New Banner</DialogTitle>
+          <DialogTitle>Create New Platform</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
-            placeholder="Banner Name"
+            placeholder="Platform Name"
             value={formData.name}
             onChange={(e) =>
               setFormData((prev) => ({ ...prev, name: e.target.value }))
@@ -109,24 +99,14 @@ export function BannerForm() {
             required
           />
 
-          <Select
-            value={formData.isActive ? "true" : "false"}
-            onValueChange={(value) =>
-              setFormData((prev) => ({
-                ...prev,
-                isActive: value === "true" ? true : false,
-              }))
+          <Input
+            placeholder="Platform URL"
+            value={formData.url}
+            onChange={(e) =>
+              setFormData((prev) => ({ ...prev, url: e.target.value }))
             }
             required
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="true">True</SelectItem>
-              <SelectItem value="false">False</SelectItem>
-            </SelectContent>
-          </Select>
+          />
 
           <Input
             type="file"
@@ -141,7 +121,7 @@ export function BannerForm() {
           />
 
           <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Creating..." : "Create Banner "}
+            {isLoading ? "Creating..." : "Create Platform"}
           </Button>
         </form>
       </DialogContent>

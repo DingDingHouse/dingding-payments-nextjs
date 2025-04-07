@@ -41,9 +41,11 @@ const resourceIcons: Record<string, any> = {
   requests: FileText,
   transactions: BarChart3,
   banners: FileText,
+  platforms: FileText,
 };
 
 export function AppSidebar({ user }: { user: User }) {
+  console.log("user", user);
   const menuItems = user?.permissions
     ?.filter((p) => p.permission.includes("r"))
     .map((p) => {

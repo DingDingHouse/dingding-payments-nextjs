@@ -93,8 +93,16 @@ export type Transaction = {
 export type Banner = {
   _id: string;
   title: string;
-  url: string;
+  image: string;
   isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+};
+export type Platform = {
+  _id: string;
+  name: string;
+  url: string;
+  image: string;
   createdAt: string;
   updatedAt: string;
 };
