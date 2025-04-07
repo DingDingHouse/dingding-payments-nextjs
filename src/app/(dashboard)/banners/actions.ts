@@ -30,7 +30,6 @@ export async function getAllBanners(
         credentials: "include",
       }
     );
-    console.log("Banners response", response);
 
     const data = await response.json();
     console.log("Banners data", data);
@@ -95,8 +94,6 @@ export async function createBanner(
       body: data,
       credentials: "include",
     });
-
-    console.log("Create Banner response", response);
     const responseData = await response.json();
 
     if (!response.ok) {
