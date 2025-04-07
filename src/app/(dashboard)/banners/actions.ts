@@ -32,7 +32,6 @@ export async function getAllBanners(
     );
 
     const data = await response.json();
-    console.log("Banners data", data);
 
     if (!response.ok) {
       throw new Error(data.error?.message || "Failed to fetch banners");

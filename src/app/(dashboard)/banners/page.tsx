@@ -10,12 +10,6 @@ export const dynamic = "force-dynamic";
 
 export default async function BannerPage(props: {
   searchParams?: Promise<{
-    page?: string;
-    limit?: string;
-    from?: string;
-    to?: string;
-    sortBy?: string;
-    sortOrder?: string;
     search?: string;
     isActive?: string;
   }>;
@@ -23,12 +17,6 @@ export default async function BannerPage(props: {
   const searchParams = await props.searchParams;
 
   const filters: BannerQuery = {
-    page: searchParams?.page ? parseInt(searchParams.page) : 1,
-    limit: searchParams?.limit ? parseInt(searchParams.limit) : 10,
-    from: searchParams?.from,
-    to: searchParams?.to,
-    sortBy: searchParams?.sortBy,
-    sortOrder: searchParams?.sortOrder as "asc" | "desc",
     search: searchParams?.search,
     isActive: searchParams?.isActive as "true" | "false",
   };
