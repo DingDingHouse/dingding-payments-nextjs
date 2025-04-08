@@ -126,3 +126,69 @@ body {
     scrollbar-width: none;
   }
 }
+
+@keyframes rotate {
+  100% {
+    transform: rotate(1turn);
+  }
+}
+
+.gamecard {
+  background: linear-gradient(
+    235deg,
+    #eec20f 0%,
+    #e5660b 39.73%,
+    #e4c00c 69.31%,
+    #e36a07 100%
+  );
+  position: relative;
+  z-index: 0;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.gamecard::before {
+  content: "";
+  position: absolute;
+  z-index: -2;
+  left: -50%;
+  top: -50%;
+  width: 200%;
+  height: 200%;
+  background-repeat: no-repeat;
+  background-size: 50% 50%, 50% 50%;
+  background-position: 0 0, 100% 0, 100% 100%, 0 100%;
+  background: conic-gradient(
+    from -45deg at 50% 50%,
+    #000000 0deg,
+    rgba(230, 190, 25, 0) 36.310283839702606deg,
+    rgba(230, 190, 25, 0) 143.74402284622192deg,
+    #000000 180deg,
+    rgba(230, 190, 25, 0) 217.69761085510254deg,
+    rgba(230, 190, 25, 0) 324.59312438964844deg
+  );
+  animation: rotate 2s linear infinite;
+  filter: blur(1.5px);
+}
+
+.gamecard::after {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  left: 6px;
+  top: 6px;
+  width: calc(100% - 12px);
+  height: calc(100% - 12px);
+  background: linear-gradient(
+    235deg,
+    #e6be19 0%,
+    #b3e888 39.73%,
+    #e5c010 69.31%,
+    #af6f01 100%
+  );
+  border-radius: 5px;
+  z-index: -1;
+}
+
+
+

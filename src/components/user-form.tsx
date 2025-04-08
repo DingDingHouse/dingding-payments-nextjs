@@ -15,9 +15,11 @@ import { useRouter } from 'next/navigation';
 import { getRoles, registerUser } from '@/lib/actions';
 import { Role } from '@/lib/types';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+import { Eye, EyeOff } from "lucide-react";
 
 export function UserForm() {
     const [open, setOpen] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
         name: '',
         username: '',
@@ -92,13 +94,23 @@ export function UserForm() {
                         onChange={e => setFormData(prev => ({ ...prev, username: e.target.value }))}
                         required
                     />
-                    <Input
-                        type="password"
-                        placeholder="Password"
-                        value={formData.password}
-                        onChange={e => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                        required
-                    />
+                    <div className="relative">
+                        <Input
+                            type={showPassword ? "text" : "password"}
+                            placeholder="Password"
+                            value={formData.password}
+                            onChange={e => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                            required
+                            className="pr-10"
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(prev => !prev)}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground"
+                        >
+                            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                        </button>
+                    </div>
 
                     <Select
                         value={formData.roleId}

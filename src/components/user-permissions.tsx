@@ -10,7 +10,7 @@ import { Input } from "./ui/input";
 import { ScrollArea } from "./ui/scroll-area";
 import { User } from "@/lib/features/users/UsersSlice";
 
-const RESOURCES = ['users', 'roles', 'wallets', 'requests'];
+const RESOURCES = ['users', 'roles', 'wallets', 'requests','banners','platforms'];
 const PERMISSIONS = ['r', 'w', 'x'];
 
 export function UserPermissions({ user, onUpdate }: { user: User; onUpdate: () => void }) {
