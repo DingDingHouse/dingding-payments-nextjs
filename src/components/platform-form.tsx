@@ -46,7 +46,7 @@ export function PlatformForm() {
       form.append("url", formData.url);
       form.append("image", formData.image);
 
-      const { data, error } = await createPlatform(form);
+      const { error } = await createPlatform(form);
       if (error) {
         toast({
           variant: "destructive",
@@ -56,7 +56,6 @@ export function PlatformForm() {
         return;
       }
 
-      if (data) {
         toast({
           title: "Success",
           description: `Platform created successfully`,
@@ -68,7 +67,7 @@ export function PlatformForm() {
         });
         setOpen(false);
         router.refresh();
-      }
+      
     } catch {
       toast({
         variant: "destructive",

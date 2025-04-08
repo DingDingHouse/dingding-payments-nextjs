@@ -99,7 +99,7 @@ export async function createPlatform(
       credentials: "include",
     });
     const responseData = await response.json();
-
+ console.log(responseData, "response data create platform");
     if (!response.ok) {
       throw new Error(
         responseData.error?.message || "Failed to create platform"

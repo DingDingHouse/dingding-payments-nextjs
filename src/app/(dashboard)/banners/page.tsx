@@ -26,7 +26,7 @@ export default async function BannerPage(props: {
   const isPlayer = decodedToken?.role === Roles.PLAYER;
 
   const { data } = await getAllBanners(filters);
-
+console.log(data,"banner")
   return (
     <div className="p-4 sm:p-10">
       <BackToHome isPlayer={isPlayer} />

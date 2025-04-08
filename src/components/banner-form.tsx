@@ -69,7 +69,7 @@ export function BannerForm() {
       if (data) {
         toast({
           title: "Success",
-          description: `Wallet "${data.name}" created successfully`,
+          description: `Banner created successfully`,
         });
         setFormData({
           name: "",
@@ -109,24 +109,31 @@ export function BannerForm() {
             required
           />
 
-          <Select
-            value={formData.isActive ? "true" : "false"}
-            onValueChange={(value) =>
-              setFormData((prev) => ({
-                ...prev,
-                isActive: value === "true" ? true : false,
-              }))
-            }
-            required
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="Select status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="true">True</SelectItem>
-              <SelectItem value="false">False</SelectItem>
-            </SelectContent>
-          </Select>
+
+          <div className="flex flex-col gap-1">
+            <label htmlFor="isActive" className="text-sm font-medium text-white">
+              Banner Status
+            </label>
+            <Select
+              value={formData.isActive ? "true" : "false"}
+              onValueChange={(value) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  isActive: value === "true" ? true : false,
+                }))
+              }
+              required
+            >
+              <SelectTrigger id="isActive">
+                <SelectValue placeholder="Select status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="true">True</SelectItem>
+                <SelectItem value="false">False</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
 
           <Input
             type="file"
