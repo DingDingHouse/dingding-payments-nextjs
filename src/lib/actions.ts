@@ -843,7 +843,6 @@ export async function getPlatform() {
         });
 
         const data = await response.json();
-console.log(data,'hjghjghj');
         if (!response.ok) {
             throw new Error(data?.error?.message || 'Failed to fetch platform');
         }
