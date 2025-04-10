@@ -24,6 +24,8 @@ export default function LoginPage() {
     const [isopen, setIsOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
+    const [bannerLoading, setBannerLoading] = useState(true);
+    const [platformLoading, setPlatformLoading] = useState(true);
     const [banner, setBanner] = useState([])
     const [platform, setPlatform] = useState([])
     const router = useRouter();
@@ -76,61 +78,40 @@ export default function LoginPage() {
     }
 
 
-    //Get Banner
     const HandelGetBanner = async () => {
+        setBannerLoading(true);
         try {
-            const response = await getBanners()
+            const response = await getBanners();
             if (response?.data?.data?.length > 0) {
-                setBanner(response?.data?.data)
+                setBanner(response?.data?.data);
             }
         } catch (error) {
-
+            console.error(error);
+        } finally {
+            setBannerLoading(false);
         }
-    }
+    };
 
-    //Get Platform
     const HandelGetPlatform = async () => {
+        setPlatformLoading(true);
         try {
-            const response = await getPlatform()
+            const response = await getPlatform();
             if (response?.data?.data?.length > 0) {
-                setPlatform(response?.data?.data)
+                setPlatform(response?.data?.data);
             }
         } catch (error) {
-
+            console.error(error);
+        } finally {
+            setPlatformLoading(false);
         }
-    }
+    };
+
 
     useEffect(() => {
         HandelGetBanner()
         HandelGetPlatform()
     }, [])
 
-    const games = [
-        { name: "FireKirin", image: "firekirin.png" },
-        { name: "Orionstar", image: "orionstar.png" },
-        { name: "Juwa", image: "juwa.png" },
-        { name: "GameVault", image: "gamevault.png" },
-        { name: "CasinoRoyale", image: "casinoroyale.png" },
-        { name: "VegasSweep", image: "vegassweep.png" },
-        { name: "MilkyWay", image: "milkyway.png" },
-        { name: "Ultra Panda", image: "ultrapanda.png" },
-        { name: "Cash Frenzy", image: "cashfrenzy.png" },
-        { name: "Pandamaster", image: "pandamaster.png" },
-        { name: "Vblink", image: "vblink.png" },
-        { name: "River Sweeps", image: "riversweeps.png" },
-        { name: "HighStake", image: "highstake.png" },
-        { name: "VegasX", image: "vegasx.png" },
-        { name: "Acebook", image: "acebook.png" },
-        { name: "Blue Dragon", image: "bluedragon.png" },
-        { name: "Para", image: "para.png" },
-        { name: "River Monster", image: "rivermonster.png" },
-        { name: "Moolah", image: "moolah.png" },
-        { name: "Sims", image: "sims.png" },
-        { name: "Meaga Spin", image: "meagaspin.png" },
-        { name: "Egames", image: "egames.png" },
-        { name: "Loot", image: "loot.png" },
-        { name: "Ignite", image: "ignite.png" },
-    ]
 
 
     return (
@@ -174,26 +155,36 @@ export default function LoginPage() {
                         }}
                     >
                         <CarouselContent>
-                            {banner?.map((image: IBanner, index: number) => (
-                                image?.isActive && <CarouselItem key={index}>
-                                    <div className="relative">
-                                        {/* <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10"></div> */}
-                                        <Card className="border-0">
-                                            <CardContent className="p-0">
-                                                <Image
-                                                    src={image?.image}
-                                                    alt={image?.title}
-                                                    width={1200}
-                                                    height={600}
-                                                    className="w-full max-h-[90vh] "
-                                                />
-
-                                            </CardContent>
-                                        </Card>
-                                    </div>
-                                </CarouselItem>
-                            ))}
+                            {bannerLoading ? (
+                                Array.from({ length: 2 }).map((_, i) => (
+                                    <CarouselItem key={i}>
+                                        <div className="h-[180px] sm:h-[240px] lg:h-[500px] w-full bg-gray-800 animate-pulse rounded-lg" />
+                                    </CarouselItem>
+                                ))
+                            ) : (
+                                banner?.map((image: IBanner, index: number) =>
+                                    image?.isActive && (
+                                        <CarouselItem key={index}>
+                                            <div className="relative">
+                                                <Card className="border-0">
+                                                    <CardContent className="p-0">
+                                                        <Image
+                                                            src={image?.image}
+                                                            alt={image?.title}
+                                                            width={3000}
+                                                            height={1500}
+                                                            quality={100}
+                                                            className=" w-full object-cover max-h-[90vh] "
+                                                        />
+                                                    </CardContent>
+                                                </Card>
+                                            </div>
+                                        </CarouselItem>
+                                    )
+                                )
+                            )}
                         </CarouselContent>
+
                     </Carousel>
                 </section>
 
@@ -206,33 +197,36 @@ export default function LoginPage() {
                     </h2>
 
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                        {platform?.map((platform: IPlatform, ind: number) => (
-                            <Link href={platform?.url} key={ind} className="group gamecard p-[2px] lg:p-1.5">
-                                <div className="bg-gray-800/30 backdrop-blur-sm !bg-black rounded-xl overflow-hidden border border-yellow-500/10 group-hover:border-yellow-500/30 transition-all duration-300 h-full flex flex-col">
-                                    <div className="relative pt-5 overflow-hidden">
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 z-10"></div>
-                                        <Image
-                                            src={platform?.image}
-                                            alt={platform?.name}
-                                            width={400}
-                                            height={300}
-                                            className="w-full aspect-[4/3] p-2 object-contain group-hover:scale-105 transition-transform duration-500"
-                                        />
-                                        <div className="absolute bottom-0 left-0 right-0 p-3 z-20 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
-                                            <Button className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600 text-black font-medium">
-                                                Play Now
-                                            </Button>
+                        {platformLoading
+                            ? Array.from({ length: 8 }).map((_, i) => (
+                                <div key={i} className="h-44 rounded-xl bg-gray-800 animate-pulse" />
+                            ))
+                            : platform?.map((platform: IPlatform, ind: number) => (
+                                <Link href={platform?.url} target="_blank" key={ind} className="group">
+                                    <div className="bg-gray-800/30 backdrop-blur-sm !bg-black rounded-xl overflow-hidden transition-all duration-300 h-full flex flex-col">
+                                        <div className="relative pt-5 overflow-hidden">
+                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 z-10"></div>
+                                            <Image
+                                                src={platform?.image}
+                                                alt={platform?.name}
+                                                width={400}
+                                                height={300}
+                                                className="w-full aspect-[4/3] p-2 object-contain group-hover:scale-105 transition-transform duration-500"
+                                            />
+                                        </div>
+                                        <div className="p-4">
+                                            <div className="flex  justify-center items-center mb-1">
+                                                <h3 className="bungee-spice-regular italic border-t-2 border-b-2 border-yellow-400 py-1 font-bold bg-gradient-to-r from-yellow-300 to-orange-500 text-transparent bg-clip-text capitalize transition-all duration-300 group-hover:from-yellow-400 group-hover:to-orange-600">
+                                                    {platform?.name}
+                                                </h3>
+
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="p-4">
-                                        <div className="flex justify-center items-center mb-1">
-                                            <h3 className="font-bold text-white group-hover:text-yellow-300  capitalize transition-colors">{platform?.name}</h3>
-                                        </div>
-                                    </div>
-                                </div>
-                            </Link>
-                        ))}
+                                </Link>
+                            ))}
                     </div>
+
                 </section>
 
                 {/* Payment Methods */}
@@ -304,7 +298,7 @@ export default function LoginPage() {
                                 <Button
                                     type="button"
                                     variant="ghost"
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 hover:bg-transparent hover:text-white"    
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 hover:bg-transparent hover:text-white"
                                     onClick={() => setShowPassword(!showPassword)}
                                 >
                                     {showPassword ? (
@@ -326,7 +320,7 @@ export default function LoginPage() {
                     </CardFooter>
                 </form>
             </Card>)}
-            {isopen && (<button onClick={handelOpen} className="fixed top-0 left-0 w-full h-screen bg-black z-[11] bg-opacity-30"></button>)}
+            {isopen && (<button onClick={handelOpen} className="fixed top-0 left-0 w-full h-screen bg-black z-[11] bg-opacity-50"></button>)}
         </>
     )
 
