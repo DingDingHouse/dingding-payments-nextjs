@@ -39,7 +39,6 @@ export async function whoIam() {
 
     return { data: data.data, error: null };
   } catch (error) {
-    console.log("Failed to fetch user data:", error);
     return {
       data: null,
       error:
@@ -107,7 +106,6 @@ export async function signOut() {
 
     return data.data;
   } catch (error) {
-    console.log("Failed to sign out:", error);
     return null;
   }
 }
@@ -356,7 +354,6 @@ export async function getDescendants(
       error: null,
     };
   } catch (error) {
-    console.log("Failed to fetch descendants:", error);
     return {
       data: null,
       error:
@@ -825,7 +822,6 @@ export async function getBanners() {
             error: null,
         };
     } catch (error) {
-        console.error('Error fetching banners:', error);
         return {
             data: null,
             error: error instanceof Error ? error.message : 'Failed to fetch banners',
@@ -855,7 +851,6 @@ export async function getPlatform() {
             error: null,
         };
     } catch (error) {
-        console.error('Error fetching platform:', error);
         return {
             data: null,
             error: error instanceof Error ? error.message : 'Failed to fetch platform',
