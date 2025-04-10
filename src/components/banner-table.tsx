@@ -113,7 +113,7 @@ const ActionMenu = ({ row }: { row: Banner }) => {
     } else {
       toast({
         title: "Success",
-        description: result.message || "User deleted successfully",
+        description: result.message || "Banner deleted successfully",
       });
       // Refresh the table data
       router.refresh();

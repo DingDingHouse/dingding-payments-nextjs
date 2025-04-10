@@ -274,7 +274,7 @@ export default function LoginPage() {
                 <CardHeader className="space-y-1 text-white">
                     <CardTitle className="text-2xl text-center">Welcome</CardTitle>
                     <CardDescription className="text-white text-opacity-70 text-center">
-                        Enter 900your credentials to sign in to your account
+                        Enter your credentials to sign in to your account
                     </CardDescription>
                 </CardHeader>
                 <form onSubmit={onSubmit} className="text-white">
