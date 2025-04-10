@@ -40,7 +40,6 @@ export default function LogoutPage() {
                     description: data.message || 'Successfully logged out'
                 });
             } catch (error) {
-                console.log('Logout error:', error);
                 // Show error toast but don't prevent redirect
                 toast({
                     variant: 'destructive',

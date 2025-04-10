@@ -32,7 +32,6 @@ export async function getAllPlatforms(
     );
 
     const data = await response.json();
-    console.log("Platform data", data);
 
     if (!response.ok) {
       throw new Error(data.error?.message || "Failed to fetch platforms");
@@ -99,7 +98,6 @@ export async function createPlatform(
       credentials: "include",
     });
     const responseData = await response.json();
- console.log(responseData, "response data create platform");
     if (!response.ok) {
       throw new Error(
         responseData.error?.message || "Failed to create platform"

@@ -26,7 +26,6 @@ export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [banner, setBanner] = useState([])
     const [platform, setPlatform] = useState([])
-    console.log(banner)
     const router = useRouter();
     const { toast } = useToast();
 
@@ -93,7 +92,6 @@ export default function LoginPage() {
     const HandelGetPlatform = async () => {
         try {
             const response = await getPlatform()
-            console.log(response, "Platform")
             if (response?.data?.data?.length > 0) {
                 setPlatform(response?.data?.data)
             }
@@ -139,7 +137,7 @@ export default function LoginPage() {
         <>
             <div className="min-h-screen bg-gradient-to-br z-[10] from-black to-gray-900 text-white relative">
                 {/* Header */}
-                <header className="sticky top-0 bg-black/90 backdrop-blur-md z-50 py-3 border-b border-yellow-500/20">
+                <header className="bg-black/90 backdrop-blur-md z-50 py-3 border-b border-yellow-500/20">
                     <div className="container mx-auto flex justify-between items-center px-4">
                         <div className="flex items-center gap-8">
                             <div className="relative inline-block text-base md:text-xl px-4 py-1.5 font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-500 border border-transparent bg-[length:100%_100%] bg-origin-border">
@@ -177,7 +175,7 @@ export default function LoginPage() {
                             {banner?.map((image: IBanner, index: number) => (
                                 image?.isActive && <CarouselItem key={index}>
                                     <div className="relative">
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10"></div>
+                                        {/* <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-10"></div> */}
                                         <Card className="border-0">
                                             <CardContent className="p-0">
                                                 <Image
@@ -185,7 +183,7 @@ export default function LoginPage() {
                                                     alt={image?.title}
                                                     width={1200}
                                                     height={600}
-                                                    className="w-full max-h-[100vh] object-cover"
+                                                    className="w-full max-h-[90vh] object-cover"
                                                 />
 
                                             </CardContent>
