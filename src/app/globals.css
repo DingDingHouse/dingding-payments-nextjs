@@ -190,5 +190,10 @@ body {
   z-index: -1;
 }
 
+.bungee-spice-regular {
+  font-family: "Bungee Spice", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
 
 
