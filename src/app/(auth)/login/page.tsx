@@ -165,6 +165,8 @@ export default function LoginPage() {
                         plugins={[
                             Autoplay({
                                 delay: 2000,
+                                stopOnInteraction: false,
+                                stopOnMouseEnter: false,
                             }),
                         ]}
                         opts={{
@@ -183,7 +185,7 @@ export default function LoginPage() {
                                                     alt={image?.title}
                                                     width={1200}
                                                     height={600}
-                                                    className="w-full max-h-[90vh] object-cover"
+                                                    className="w-full max-h-[90vh] "
                                                 />
 
                                             </CardContent>
@@ -268,7 +270,7 @@ export default function LoginPage() {
                 </footer>
             </div>
             {isopen && (<Card className="w-[95%] bg-black md:w-[70%] p-5 z-[12] border-[2px] border-yellow-600  lg:w-[40%] xl:w-[30%] fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] ">
-                <Button onClick={handelOpen} className="text-white absolute right-0 top-1 hover:bg-transparent hover:scale-125 transition-all"><X className="scale-150" /></Button>
+                <Button onClick={handelOpen} className="text-white absolute right-0 top-1 hover:bg-transparent bg-transparent hover:scale-125 transition-all hover:text-white"><X className="scale-150" /></Button>
                 <CardHeader className="space-y-1 text-white">
                     <CardTitle className="text-2xl text-center">Welcome</CardTitle>
                     <CardDescription className="text-white text-opacity-70 text-center">
