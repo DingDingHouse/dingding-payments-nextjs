@@ -267,15 +267,15 @@ export default function LoginPage() {
                     </div>
                 </footer>
             </div>
-            {isopen && (<Card className="w-[95%] md:w-[70%] p-5 z-[12] border-[2px] border-yellow-600  lg:w-[40%] xl:w-[30%] fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] ">
-                <Button onClick={handelOpen} className="bg-transparent text-white absolute right-0 top-1 hover:bg-transparent hover:scale-125 transition-all"><X className="scale-150" /></Button>
-                <CardHeader className="space-y-1">
+            {isopen && (<Card className="w-[95%] bg-black md:w-[70%] p-5 z-[12] border-[2px] border-yellow-600  lg:w-[40%] xl:w-[30%] fixed top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] ">
+                <Button onClick={handelOpen} className="text-white absolute right-0 top-1 hover:bg-transparent hover:scale-125 transition-all"><X className="scale-150" /></Button>
+                <CardHeader className="space-y-1 text-white">
                     <CardTitle className="text-2xl text-center">Welcome</CardTitle>
-                    <CardDescription className="text-center">
-                        Enter your credentials to sign in to your account
+                    <CardDescription className="text-white text-opacity-70 text-center">
+                        Enter 900your credentials to sign in to your account
                     </CardDescription>
                 </CardHeader>
-                <form onSubmit={onSubmit}>
+                <form onSubmit={onSubmit} className="text-white">
                     <CardContent className="space-y-4">
                         <div className="space-y-2">
                             <Label htmlFor="username">Username</Label>
@@ -302,7 +302,7 @@ export default function LoginPage() {
                                 <Button
                                     type="button"
                                     variant="ghost"
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 hover:bg-transparent"
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 hover:bg-transparent hover:text-white"    
                                     onClick={() => setShowPassword(!showPassword)}
                                 >
                                     {showPassword ? (
@@ -315,7 +315,7 @@ export default function LoginPage() {
                         </div>
                     </CardContent>
                     <CardFooter className="pt-5">
-                        <Button className="w-full bg-gradient-to-r from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600" type="submit" disabled={isLoading}>
+                        <Button className="w-full bg-gradient-to-r text-black from-yellow-400 to-orange-500 hover:from-yellow-500 hover:to-orange-600" type="submit" disabled={isLoading}>
                             {isLoading && (
                                 <Icons.spinner className="mr-2 h-4 w-4 animate-spin" />
                             )}
