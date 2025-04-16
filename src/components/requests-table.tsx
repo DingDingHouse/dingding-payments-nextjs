@@ -563,7 +563,7 @@ export default function RequestsTable({ data }: { data: Request[] }) {
                 </div>
             </div>
             <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-                <DialogContent className="sm:max-w-3xl">
+                <DialogContent className="sm:max-w-3xl overflow-y-scroll h-[85vh]">
                     <DialogHeader>
                         <DialogTitle>Request Details</DialogTitle>
                     </DialogHeader>
