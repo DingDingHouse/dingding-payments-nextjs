@@ -64,10 +64,10 @@ export function AppSidebar({ user }: { user: User }) {
           <SidebarMenu>
             <SidebarMenuItem>
               <SidebarMenuButton asChild>
-                <Link href="/">
+                {/* <Link href="/">
                   <Home />
                   <span>Home</span>
-                </Link>
+                </Link> */}
               </SidebarMenuButton>
             </SidebarMenuItem>
 
