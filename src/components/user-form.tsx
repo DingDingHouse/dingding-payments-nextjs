@@ -44,7 +44,13 @@ export function UserForm() {
             });
             return;
         }
-
+    setFormData({
+      name: "",
+      username: "",
+      password: "",
+      status: "active",
+      roleId: "",
+    });
         toast({
             title: "Success",
             description: "User created successfully"
