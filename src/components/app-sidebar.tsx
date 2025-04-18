@@ -31,6 +31,8 @@ import {
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
 import { User } from "@/lib/features/users/UsersSlice";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 const resourceIcons: Record<string, any> = {
   home: Home,
@@ -45,7 +47,14 @@ const resourceIcons: Record<string, any> = {
 };
 
 export function AppSidebar({ user }: { user: User }) {
-  console.log("user", user);
+  const router=useRouter();
+  console.log("userasaS", user.status);
+  useEffect(()=>{
+    if(user?.status==='deleted'){
+      router.push('/logout')
+    }
+  },[])
+  
   const menuItems = user?.permissions
     ?.filter((p) => p.permission.includes("r"))
     .map((p) => {
